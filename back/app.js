@@ -1,5 +1,27 @@
+// MODULES
 const express = require('express');
 const app = express();
+const bodyParser = require('body-parser');
+const mysql = require('mysql');
+const env = require('./environment');
+// FIN MODULES
+
+// CONNEXION BASE DE DONNEE
+const connection = mysql.createConnection({
+    host     : 'localhost',
+    user     : `${env.dbId}`,
+    password : `${env.dbPW}`,
+  });
+   
+  connection.connect(function(err) {
+    if (err) {
+      console.error('error connecting: ' + err.stack);
+      return;
+    }
+   
+    console.log('connected as id ' + connection.threadId);
+  });
+// FIN CONNEXION 
 
 // PARAMETRAGE DES HEADERS
 app.use((req, res, next) => { // Evite les erreurs CORS
