@@ -8,6 +8,7 @@ const env = require('./environment');
 
 // IMPORTATION ROUTES
 const userRoutes = require("./routes/user");
+const postRoutes = require("./routes/post");
 // FIN IMPORTATIONS
 
 // CONNEXION BASE DE DONNEE
@@ -42,6 +43,7 @@ app.use(bodyParser.json()); // Rend le corps de la requête exploitable facileme
 
 // ROUTES
 app.use("/api/user", userRoutes);
+app.use("/api/post", postRoutes);
 // FIN ROUTES
 
 app.use((req, res, next) => {
