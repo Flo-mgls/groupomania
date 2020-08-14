@@ -6,6 +6,10 @@ const mysql = require('mysql');
 const env = require('./environment');
 // FIN MODULES
 
+// IMPORTATION ROUTES
+const userRoutes = require("./routes/user");
+// FIN IMPORTATIONS
+
 // CONNEXION BASE DE DONNEE
 const connection = mysql.createConnection({
     host     : 'localhost',
@@ -35,6 +39,10 @@ app.use((req, res, next) => { // Evite les erreurs CORS
 // BODYPARSER
 app.use(bodyParser.json()); // Rend le corps de la requête exploitable facilement
 // FIN BODYPARSER
+
+// ROUTES
+app.use("/api/user", userRoutes);
+// FIN ROUTES
 
 app.use((req, res, next) => {
     res.end('serveur OP');
