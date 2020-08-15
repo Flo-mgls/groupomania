@@ -2,8 +2,6 @@
 const express = require('express');
 const app = express();
 const bodyParser = require('body-parser');
-const mysql = require('mysql');
-const env = require('./environment');
 // FIN MODULES
 
 // IMPORTATION ROUTES
