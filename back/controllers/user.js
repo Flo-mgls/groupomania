@@ -1,6 +1,8 @@
 // MODULES
 const mysql = require('../dbConnect').connection;
-const bcrypt = require('bcrypt');
+const env = require("../environment"); // Récupère les variables d'environnement
+const bcrypt = require('bcrypt'); // Hash le mot de passe
+const jwt = require("jsonwebtoken"); // Génère un token sécurisé
 // FIN MODULES
 
 // MIDDLEWARE SIGNUP
@@ -44,7 +46,14 @@ exports.login = (req, res, next) => {
             if(!valid){
                 return res.status(401).json({error: "Mot de passe incorrect !"});
             }
-            res.status(200).json(result);
+            res.status(200).json({
+                userID: result[0].userID,
+                token: jwt.sign(
+                    {userID: result[0].userID},
+                    env.token,
+                    {expiresIn: "24h"}
+                )
+            });
         })
         .catch(e => res.status(500).json(e));
     });

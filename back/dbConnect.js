@@ -1,6 +1,6 @@
 // MODULES
 const mysql = require('mysql');
-const env = require('./environment');
+const env = require('./environment'); // Récupère les variables d'environnement
 // FIN MODULES
 
 // CONNEXION BASE DE DONNEE
