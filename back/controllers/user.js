@@ -8,8 +8,8 @@ exports.signup = (req, res, next) => {
     bcrypt.hash(req.body.password, 10)
     .then(hash => {
         email = req.body.email;
-        pseudo = hash;
-        password = req.body.password;
+        pseudo = req.body.pseudo;
+        password = hash;
         bio = req.body.bio;
         avatar = req.body.avatar;
     
@@ -17,7 +17,7 @@ exports.signup = (req, res, next) => {
         values = [email, pseudo, password, bio, avatar];
         mysql.query(sqlSignup, values, function (err, result) {
             if (err) {
-                res.status(500).json(err.message);
+                return res.status(500).json(err.message);
             };
             res.status(201).json(result);
           });
@@ -28,7 +28,26 @@ exports.signup = (req, res, next) => {
 
 // MIDDLEWARE LOGIN
 exports.login = (req, res, next) => {
-    
+    email = req.body.email;
+    password = req.body.password;
+
+    sqlFindUser = "SELECT userID, password FROM User where email = ?";
+    mysql.query(sqlFindUser, [email], function (err, result) {
+        if (err) {
+           return res.status(500).json(err.message);
+        };
+        if (result.length == 0) {
+           return res.status(401).json({error: "Utilisateur non trouvé !"});
+        }
+        bcrypt.compare(password, result[0].password)
+        .then(valid => {
+            if(!valid){
+                return res.status(401).json({error: "Mot de passe incorrect !"});
+            }
+            res.status(200).json(result);
+        })
+        .catch(e => res.status(500).json(e));
+    });
 }
 // FIN MIDDLEWARE
 
