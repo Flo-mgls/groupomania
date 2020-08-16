@@ -7,10 +7,14 @@ const router = express.Router();
 const userCtrl = require("../controllers/user");
 // FIN IMPORTATION
 
+// IMPORTATION MIDDLEWARES
+const auth = require("../middleware/auth"); // Crée un token d'identification
+// FIN IMPORTATION
+
 // ROUTE
 router.post("/signup", userCtrl.signup);
 router.post("/login", userCtrl.login);
-router.delete("/delete", userCtrl.delete);
+router.delete("/delete", auth, userCtrl.delete);
 router.get("/profile", userCtrl.profile);
 // ROUTE
 

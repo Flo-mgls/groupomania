@@ -33,7 +33,7 @@ exports.login = (req, res, next) => {
     email = req.body.email;
     password = req.body.password;
 
-    sqlFindUser = "SELECT userID, password FROM User where email = ?";
+    sqlFindUser = "SELECT userID, password FROM User WHERE email = ?";
     mysql.query(sqlFindUser, [email], function (err, result) {
         if (err) {
            return res.status(500).json(err.message);
@@ -62,7 +62,41 @@ exports.login = (req, res, next) => {
 
 // MIDDLEWARE DELETE
 exports.delete = (req, res, next) => {
-    
+    const password = req.body.password;
+    let passwordToHash;
+    const userID = res.locals.userID;
+
+    sqlFindUser = "SELECT password FROM User WHERE userID = ?";
+    mysql.query(sqlFindUser, [userID], function (err, result) {
+        if (err) {
+           return res.status(500).json(err.message);
+        };
+
+        if (result.length == 0) {
+            return res.status(401).json({error: "Utilisateur non trouvé !"});
+         }
+         
+        passwordToHash = result[0].password;
+        bcrypt.compare(password, passwordToHash)
+        .then(valid => {
+            if(!valid){
+                return res.status(401).json({error: "Mot de passe incorrect !"});
+            }
+            sqlDeleteUser = "DELETE FROM User WHERE userID = ?";
+            mysql.query(sqlDeleteUser, [userID], function (err, result) {
+                if (err) {
+                   return res.status(500).json(err.message);
+                };
+                if (result.affectedRows == 0) {
+                    return res.status(400).json({message: "Suppression échouée"});
+                }
+                res.status(204).end();
+            });
+        })
+        .catch(e => res.status(500).json(e));
+    });
+
+  
 }
 // FIN MIDDLEWARE
 
