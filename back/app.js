@@ -23,6 +23,7 @@ app.use(bodyParser.json()); // Rend le corps de la requête exploitable facileme
 // FIN BODYPARSER
 
 // ROUTES
+app.use("/images", express.static(path.join(__dirname, "images")));
 app.use("/api/user", userRoutes);
 app.use("/api/post", postRoutes);
 // FIN ROUTES
