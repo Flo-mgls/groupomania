@@ -11,7 +11,7 @@ module.exports = (req, res, next) => { // Check si le token est bon
         res.locals.userID = decodedToken.userID;
         next();
     } catch{
-        res.status(401).json(new Error('Requête invalide!'));
+        res.status(401).json({message: 'Requête invalide!'});
     }
 };
 // FIN MIDDLEWARE
