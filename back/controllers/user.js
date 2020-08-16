@@ -11,13 +11,15 @@ exports.signup = (req, res, next) => {
     bcrypt.hash(req.body.password, 10)
         .then(hash => {
             const email = req.body.email;
-            const pseudo = req.body.pseudo;
+            const firstName = req.body.firstName;
+            const lastName = req.body.lastName;
             const password = hash;
-            const bio = req.body.bio;
-            const avatarUrl = req.body.avatarUrl;
 
-            const sqlSignup = "INSERT INTO user VALUES (NULL, ?, ?, ?, ?, ?, CURDATE())";
-            const values = [email, pseudo, password, bio, avatarUrl];
+            let sqlSignup;
+            let values;
+
+            sqlSignup = "INSERT INTO user VALUES (NULL, ?, ?, ?, NULL, ?, NULL, avatarUrl, CURDATE())";
+            values = [email, firstName, lastName, password,];
             mysql.query(sqlSignup, values, function (err, result) {
                 if (err) {
                     return res.status(500).json(err.message);
@@ -35,6 +37,7 @@ exports.login = (req, res, next) => {
     const password = req.body.password;
 
     const sqlFindUser = "SELECT userID, password FROM User WHERE email = ?";
+
     mysql.query(sqlFindUser, [email], function (err, result) {
         if (err) {
             return res.status(500).json(err.message);
@@ -67,24 +70,29 @@ exports.delete = (req, res, next) => {
     let passwordHashed;
     const userID = res.locals.userID;
 
-    const sqlFindUser = "SELECT password, avatarUrl FROM User WHERE userID = ?";
+    let sqlFindUser;
+    let sqlDeleteUser;
+
+    sqlFindUser = "SELECT password, avatarUrl FROM User WHERE userID = ?";
     mysql.query(sqlFindUser, [userID], function (err, result) {
         if (err) {
             return res.status(500).json(err.message);
-        };
-
+        }
         if (result.length == 0) {
             return res.status(401).json({ error: "Utilisateur non trouvé !" });
         }
+
         const filename = result[0].avatarUrl.split("/images/")[1];
         fs.unlink(`images/${filename}`, () => { // On supprime le fichier image en amont
             passwordHashed = result[0].password;
+
             bcrypt.compare(password, passwordHashed)
                 .then(valid => {
                     if (!valid) {
                         return res.status(401).json({ error: "Mot de passe incorrect !" });
                     }
-                    const sqlDeleteUser = "DELETE FROM User WHERE userID = ?";
+
+                    sqlDeleteUser = "DELETE FROM User WHERE userID = ?";
                     mysql.query(sqlDeleteUser, [userID], function (err, result) {
                         if (err) {
                             return res.status(500).json(err.message);
@@ -92,7 +100,6 @@ exports.delete = (req, res, next) => {
                         if (result.affectedRows == 0) {
                             return res.status(400).json({ message: "Suppression échouée" });
                         }
-                        console.log(filename);
                         res.status(204).end();
                     });
                 })
@@ -106,7 +113,9 @@ exports.delete = (req, res, next) => {
 exports.profile = (req, res, next) => {
     const userID = req.params.id;
 
-    const sqlGetUser = "SELECT email, pseudo, bio, avatarUrl FROM User WHERE userID = ?";
+    let sqlGetUser;
+
+    sqlGetUser = "SELECT email, pseudo, bio, avatarUrl FROM User WHERE userID = ?";
     mysql.query(sqlGetUser, [userID], function (err, result) {
         if (err) {
             return res.status(500).json(err.message);
@@ -127,17 +136,24 @@ exports.modify = (req, res, next) => {
     const bio = req.body.bio;
     const password = req.body.password;
 
+    let sqlFindUser;
+    let sqlModifyUser;
+    let sqlChangePassword;
+    let values;
+
     if (req.file) {
         const avatarUrl = `${req.protocol}://${req.get("host")}/images/${req.file.filename}`;
-        let sqlFindUser = "SELECT avatarUrl FROM User WHERE userID = ?";
+
+        sqlFindUser = "SELECT avatarUrl FROM User WHERE userID = ?";
         mysql.query(sqlFindUser, [userID], function (err, result) {
             if (err) {
                 return res.status(500).json(err.message);
             }
+
             const filename = result[0].avatarUrl.split("/images/")[1];
             fs.unlink(`images/${filename}`, () => { // On supprime le fichier image en amont
-                let sqlModifyUser = "UPDATE User SET email=?, pseudo=?, bio=?, avatarUrl=? WHERE userID = ?";
-                let values = [email, pseudo, bio, avatarUrl, userID];
+                sqlModifyUser = "UPDATE User SET email=?, pseudo=?, bio=?, avatarUrl=? WHERE userID = ?";
+                values = [email, pseudo, bio, avatarUrl, userID];
                 mysql.query(sqlModifyUser, values, function (err, result) {
                     if (err) {
                         return res.status(500).json(err.message);
@@ -146,8 +162,9 @@ exports.modify = (req, res, next) => {
                 });
             })
         });
+
     } else if (!req.file && !password) {
-        let sqlModifyUser = "UPDATE User SET email=?, pseudo=?, bio=? WHERE userID = ?";
+        sqlModifyUser = "UPDATE User SET email=?, pseudo=?, bio=? WHERE userID = ?";
         values = [email, pseudo, bio, userID];
         mysql.query(sqlModifyUser, values, function (err, result) {
             if (err) {
@@ -155,13 +172,13 @@ exports.modify = (req, res, next) => {
             };
             return res.status(200).json({ message: "Utilisateur modifé !" });
         });
+
     } else if (!req.file && password) {
         sqlFindUser = "SELECT password FROM User WHERE userID = ?";
         mysql.query(sqlFindUser, [userID], function (err, result) {
             if (err) {
                 return res.status(500).json(err.message);
             }
-
             if (result.length == 0) {
                 return res.status(401).json({ error: "Utilisateur non trouvé !" });
             }
@@ -175,7 +192,7 @@ exports.modify = (req, res, next) => {
                     }
                     bcrypt.hash(newPassword, 10)
                         .then(hash => {
-                            const sqlChangePassword = "UPDATE User SET password=? WHERE userID = ?";
+                            sqlChangePassword = "UPDATE User SET password=? WHERE userID = ?";
                             mysql.query(sqlChangePassword, [hash, userID], function (err, result) {
                                 if (err) {
                                     return res.status(500).json(err.message);
