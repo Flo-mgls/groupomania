@@ -51,7 +51,6 @@ exports.login = (req, res, next) => {
                     return res.status(401).json({ error: "Mot de passe incorrect !" });
                 }
                 res.status(200).json({
-                    userID: result[0].userID,
                     token: jwt.sign(
                         { userID: result[0].userID },
                         env.token,
@@ -141,7 +140,7 @@ exports.modify = (req, res, next) => {
     let sqlChangePassword;
     let values;
 
-    if (req.file) {
+    if (req.file) { // Si le changement concerne l'avatar on update directement
         const avatarUrl = `${req.protocol}://${req.get("host")}/images/${req.file.filename}`;
 
         sqlFindUser = "SELECT avatarUrl FROM User WHERE userID = ?";
@@ -152,9 +151,8 @@ exports.modify = (req, res, next) => {
 
             const filename = result[0].avatarUrl.split("/images/")[1];
             fs.unlink(`images/${filename}`, () => { // On supprime le fichier image en amont
-                sqlModifyUser = "UPDATE User SET email=?, pseudo=?, bio=?, avatarUrl=? WHERE userID = ?";
-                values = [email, pseudo, bio, avatarUrl, userID];
-                mysql.query(sqlModifyUser, values, function (err, result) {
+                sqlModifyUser = "UPDATE User SET avatarUrl=? WHERE userID = ?";
+                mysql.query(sqlModifyUser, [userID], function (err, result) {
                     if (err) {
                         return res.status(500).json(err.message);
                     };
@@ -163,17 +161,7 @@ exports.modify = (req, res, next) => {
             })
         });
 
-    } else if (!req.file && !password) {
-        sqlModifyUser = "UPDATE User SET email=?, pseudo=?, bio=? WHERE userID = ?";
-        values = [email, pseudo, bio, userID];
-        mysql.query(sqlModifyUser, values, function (err, result) {
-            if (err) {
-                return res.status(500).json(err.message);
-            };
-            return res.status(200).json({ message: "Utilisateur modifé !" });
-        });
-
-    } else if (!req.file && password) {
+    } else { // Si le chanement concerne les infos de l'user on demande le mdp
         sqlFindUser = "SELECT password FROM User WHERE userID = ?";
         mysql.query(sqlFindUser, [userID], function (err, result) {
             if (err) {
@@ -190,20 +178,37 @@ exports.modify = (req, res, next) => {
                     if (!valid) {
                         return res.status(401).json({ error: "Mot de passe incorrect !" });
                     }
-                    bcrypt.hash(newPassword, 10)
-                        .then(hash => {
-                            sqlChangePassword = "UPDATE User SET password=? WHERE userID = ?";
-                            mysql.query(sqlChangePassword, [hash, userID], function (err, result) {
-                                if (err) {
-                                    return res.status(500).json(err.message);
-                                }
-                                if (result.affectedRows == 0) {
-                                    return res.status(400).json({ message: "Changement échoué !" });
-                                }
-                                res.status(200).json({ message: "Changement réussi !" });
-                            });
-                        })
-                        .catch(e => res.status(500).json(e));
+
+                    if (newPassword) { // Si un nouveau mdp est défini
+                        bcrypt.hash(newPassword, 10)
+                            .then(hash => {
+                                sqlChangePassword = "UPDATE User SET email=?, pseudo=?, bio=?, password=? WHERE userID = ?";
+                                values = [email, pseudo, bio, hash, userID];
+                                mysql.query(sqlChangePassword, values, function (err, result) {
+                                    if (err) {
+                                        return res.status(500).json(err.message);
+                                    }
+                                    if (result.affectedRows == 0) {
+                                        return res.status(400).json({ message: "Changement échoué !" });
+                                    }
+                                    res.status(200).json({ message: "Changement réussi !" });
+                                });
+                            })
+                            .catch(e => res.status(500).json(e));
+
+                    } else { // Si le mdp reste le même
+                        sqlModifyUser = "UPDATE User SET email=?, pseudo=?, bio=? WHERE userID = ?";
+                        values = [email, pseudo, bio, userID];
+                        mysql.query(sqlModifyUser, values, function (err, result) {
+                            if (err) {
+                                return res.status(500).json(err.message);
+                            }
+                            if (result.affectedRows == 0) {
+                                return res.status(400).json({ message: "Changement échoué !" });
+                            }
+                            res.status(200).json({ message: "Changement réussi !" });
+                        });
+                    }
                 })
                 .catch(e => res.status(500).json(e));
         });
