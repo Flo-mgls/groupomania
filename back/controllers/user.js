@@ -3,6 +3,7 @@ const mysql = require('../dbConnect').connection;
 const env = require("../environment"); // Récupère les variables d'environnement
 const bcrypt = require('bcrypt'); // Hash le mot de passe
 const jwt = require("jsonwebtoken"); // Génère un token sécurisé
+const fs = require("fs"); // Permet de gérer les fichiers stockés
 // FIN MODULES
 
 // MIDDLEWARE SIGNUP
@@ -66,7 +67,7 @@ exports.delete = (req, res, next) => {
     let passwordHashed;
     const userID = res.locals.userID;
 
-    const sqlFindUser = "SELECT password FROM User WHERE userID = ?";
+    const sqlFindUser = "SELECT password, avatarUrl FROM User WHERE userID = ?";
     mysql.query(sqlFindUser, [userID], function (err, result) {
         if (err) {
             return res.status(500).json(err.message);
@@ -75,25 +76,28 @@ exports.delete = (req, res, next) => {
         if (result.length == 0) {
             return res.status(401).json({ error: "Utilisateur non trouvé !" });
         }
-
-        passwordHashed = result[0].password;
-        bcrypt.compare(password, passwordHashed)
-            .then(valid => {
-                if (!valid) {
-                    return res.status(401).json({ error: "Mot de passe incorrect !" });
-                }
-                const sqlDeleteUser = "DELETE FROM User WHERE userID = ?";
-                mysql.query(sqlDeleteUser, [userID], function (err, result) {
-                    if (err) {
-                        return res.status(500).json(err.message);
-                    };
-                    if (result.affectedRows == 0) {
-                        return res.status(400).json({ message: "Suppression échouée" });
+        const filename = result[0].avatarUrl.split("/images/")[1];
+        fs.unlink(`images/${filename}`, () => { // On supprime le fichier image en amont
+            passwordHashed = result[0].password;
+            bcrypt.compare(password, passwordHashed)
+                .then(valid => {
+                    if (!valid) {
+                        return res.status(401).json({ error: "Mot de passe incorrect !" });
                     }
-                    res.status(204).end();
-                });
-            })
-            .catch(e => res.status(500).json(e));
+                    const sqlDeleteUser = "DELETE FROM User WHERE userID = ?";
+                    mysql.query(sqlDeleteUser, [userID], function (err, result) {
+                        if (err) {
+                            return res.status(500).json(err.message);
+                        };
+                        if (result.affectedRows == 0) {
+                            return res.status(400).json({ message: "Suppression échouée" });
+                        }
+                        console.log(filename);
+                        res.status(204).end();
+                    });
+                })
+                .catch(e => res.status(500).json(e));
+        })
     });
 }
 // FIN MIDDLEWARE
@@ -125,16 +129,25 @@ exports.modify = (req, res, next) => {
 
     if (req.file) {
         const avatarUrl = `${req.protocol}://${req.get("host")}/images/${req.file.filename}`;
-        let sqlModifyUser = "UPDATE User SET email=?, pseudo=?, bio=?, avatarUrl=? WHERE userID = ?";
-        let values = [email, pseudo, bio, avatarUrl, userID];
-        mysql.query(sqlModifyUser, values, function (err, result) {
+        let sqlFindUser = "SELECT avatarUrl FROM User WHERE userID = ?";
+        mysql.query(sqlFindUser, [userID], function (err, result) {
             if (err) {
                 return res.status(500).json(err.message);
-            };
-            return res.status(200).json({ message: "Utilisateur modifé !" });
+            }
+            const filename = result[0].avatarUrl.split("/images/")[1];
+            fs.unlink(`images/${filename}`, () => { // On supprime le fichier image en amont
+                let sqlModifyUser = "UPDATE User SET email=?, pseudo=?, bio=?, avatarUrl=? WHERE userID = ?";
+                let values = [email, pseudo, bio, avatarUrl, userID];
+                mysql.query(sqlModifyUser, values, function (err, result) {
+                    if (err) {
+                        return res.status(500).json(err.message);
+                    };
+                    return res.status(200).json({ message: "Utilisateur modifé !" });
+                });
+            })
         });
     } else if (!req.file && !password) {
-        sqlModifyUser = "UPDATE User SET email=?, pseudo=?, bio=? WHERE userID = ?";
+        let sqlModifyUser = "UPDATE User SET email=?, pseudo=?, bio=? WHERE userID = ?";
         values = [email, pseudo, bio, userID];
         mysql.query(sqlModifyUser, values, function (err, result) {
             if (err) {
@@ -143,7 +156,7 @@ exports.modify = (req, res, next) => {
             return res.status(200).json({ message: "Utilisateur modifé !" });
         });
     } else if (!req.file && password) {
-        const sqlFindUser = "SELECT password FROM User WHERE userID = ?";
+        sqlFindUser = "SELECT password FROM User WHERE userID = ?";
         mysql.query(sqlFindUser, [userID], function (err, result) {
             if (err) {
                 return res.status(500).json(err.message);
