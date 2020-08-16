@@ -15,7 +15,7 @@ const auth = require("../middleware/auth"); // Crée un token d'identification
 router.post("/signup", userCtrl.signup);
 router.post("/login", userCtrl.login);
 router.delete("/delete", auth, userCtrl.delete);
-router.get("/profile", userCtrl.profile);
+router.get("/:id/profile", auth, userCtrl.profile);
 // ROUTE
 
 module.exports = router;

@@ -21,7 +21,7 @@ exports.signup = (req, res, next) => {
             if (err) {
                 return res.status(500).json(err.message);
             };
-            res.status(201).json(result);
+            res.status(201).json({message: "Utilisateur crée !"});
           });
     })
     .catch(e => res.status(500).json(e));
@@ -75,7 +75,7 @@ exports.delete = (req, res, next) => {
         if (result.length == 0) {
             return res.status(401).json({error: "Utilisateur non trouvé !"});
          }
-         
+
         passwordToHash = result[0].password;
         bcrypt.compare(password, passwordToHash)
         .then(valid => {
@@ -94,14 +94,23 @@ exports.delete = (req, res, next) => {
             });
         })
         .catch(e => res.status(500).json(e));
-    });
-
-  
+    }); 
 }
 // FIN MIDDLEWARE
 
 // MIDDLEWARE PROFILE
 exports.profile = (req, res, next) => {
-    
+    const userID = req.params.id;
+
+    sqlGetUser = "SELECT email, pseudo, bio, avatarUrl FROM User WHERE userID = ?";
+    mysql.query(sqlGetUser, [userID], function (err, result) {
+        if (err) {
+           return res.status(500).json(err.message);
+        };
+        if (result.length == 0) {
+            return res.status(400).json({message: "Aucun utilisateur ne correspond à votre requête"});
+        }
+        res.status(200).json(result);
+    });
 }
 // FIN MIDDLEWARE
