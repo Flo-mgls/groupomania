@@ -74,7 +74,29 @@ exports.createPost = (req, res, next) => {
 
 // MIDDLEWARE DELETEPOST
 exports.deletePost = (req, res, next) => {
+    const postID = req.params.id;
+    const userID = res.locals.userID;
 
+    let sqlDeletePost;
+    let sqlSelectPost;
+
+    sqlSelectPost = "SELECT gifUrl FROM Post WHERE postID = ?";
+    mysql.query(sqlSelectPost, [postID], function (err, result) {
+        if (err) {
+            return res.status(500).json(err.message);
+        };
+
+        const filename = result[0].gifUrl.split("/images/")[1];
+        fs.unlink(`images/${filename}`, () => { // On supprime le fichier image en amont
+            sqlDeletePost = "DELETE FROM Post WHERE userID = ? AND postID = ?";
+            mysql.query(sqlDeletePost, [userID, postID], function (err, result) {
+                if (err) {
+                    return res.status(500).json(err.message);
+                };
+                res.status(201).json({ message: "Post supprimé !" });
+            });
+        })
+    });
 }
 // FIN MIDDLEWARE
 
