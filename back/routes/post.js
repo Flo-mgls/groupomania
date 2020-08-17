@@ -13,7 +13,7 @@ const multer = require("../middleware/multer-config"); // Permet d'envoyer un fi
 // FIN IMPORTATION
 
 // ROUTES
-router.get("/", postCtrl.getAllPosts);
+router.get("/", auth, postCtrl.getAllPosts);
 router.get("/:id", postCtrl.getOnePost);
 router.post("/", auth, postCtrl.createPost);
 router.delete("/:id", postCtrl.deletePost);
