@@ -39,8 +39,8 @@ exports.getOnePost = (req, res, next) => {
     COUNT(CASE WHEN reaction.reaction = -1 then 1 else null end) AS countDown,
     SUM(CASE WHEN reaction.userID = ? AND reaction.reaction = 1 then 1 WHEN reaction.userID = ? AND reaction.reaction = -1 then -1 else 0 end) AS yourReaction,
     COUNT(CASE WHEN Post.userID = ? then 1 else null end) AS yourPost
-    FROM Post LEFT OUTER JOIN User ON Post.userID = User.userID LEFT OUTER JOIN Reaction ON Post.postID = Reaction.postID WHERE Post.postID = ? GROUP BY Post.postID`;
-    mysql.query(sqlGetPost, [userID, userID, userID, postID], function (err, result) {
+    FROM Post LEFT OUTER JOIN User ON Post.userID = User.userID LEFT OUTER JOIN Reaction ON Post.postID = Reaction.postID WHERE Post.postID = ? OR Post.postIDComment = ? GROUP BY Post.postID`;
+    mysql.query(sqlGetPost, [userID, userID, userID, postID, postID], function (err, result) {
         if (err) {
             return res.status(500).json(err.message);
         };
