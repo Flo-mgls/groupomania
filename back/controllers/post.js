@@ -122,6 +122,20 @@ exports.createComment = (req, res, next) => {
 
 // MIDDLEWARE REACTPOST
 exports.reactPost = (req, res, next) => {
+    const userID = res.locals.userID;
+    const reaction = req.body.reaction;
+    const postID = req.params.id;
 
+    let sqlReaction;
+    let values;
+
+    sqlReaction = `INSERT INTO Reaction VALUES (?, ?, ?, CURDATE()) ON DUPLICATE KEY UPDATE reaction = ?`
+    values = [userID, postID, reaction, reaction];
+    mysql.query(sqlReaction, values, function (err, result) {
+        if (err) {
+            return res.status(500).json(err.message);
+        };
+        res.status(201).json({ message: "Reaction créee !" });
+    });
 }
 // FIN MIDDLEWARE
