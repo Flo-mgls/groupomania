@@ -29,7 +29,26 @@ exports.getAllPosts = (req, res, next) => {
 
 // MIDDLEWARE GETONEPOST
 exports.getOnePost = (req, res, next) => {
+    const userID = res.locals.userID;
+    const postID = req.params.id;
 
+    let sqlGetPosts;
+
+    sqlGetPosts = `SELECT Post.postID, post.userID, legend, gifUrl, post.dateCreation, fistName, lastName, pseudo, avatarUrl,
+    COUNT(CASE WHEN reaction.reaction = 1 then 1 else null end) AS countUp, 
+    COUNT(CASE WHEN reaction.reaction = -1 then 1 else null end) AS countDown,
+    SUM(CASE WHEN reaction.userID = ? AND reaction.reaction = 1 then 1 WHEN reaction.userID = ? AND reaction.reaction = -1 then -1 else 0 end) AS yourReaction,
+    COUNT(CASE WHEN Post.userID = ? then 1 else null end) AS yourPost
+    FROM Post LEFT OUTER JOIN User ON Post.userID = User.userID LEFT OUTER JOIN Reaction ON Post.postID = Reaction.postID WHERE Post.postID = ? GROUP BY Post.postID`;
+    mysql.query(sqlGetPosts, [userID, userID, userID, postID], function (err, result) {
+        if (err) {
+            return res.status(500).json(err.message);
+        };
+        if (result.length == 0) {
+            return res.status(400).json({ message: "Aucun post à afficher !" });
+        }
+        res.status(200).json(result);
+    });
 }
 // FIN MIDDLEWARE
 
