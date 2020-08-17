@@ -14,7 +14,7 @@ exports.getAllPosts = (req, res, next) => {
     COUNT(CASE WHEN reaction.reaction = -1 then 1 else null end) AS countDown,
     SUM(CASE WHEN reaction.userID = ? AND reaction.reaction = 1 then 1 WHEN reaction.userID = ? AND reaction.reaction = -1 then -1 else 0 end) AS yourReaction,
     COUNT(CASE WHEN Post.userID = ? then 1 else null end) AS yourPost
-    FROM Post LEFT OUTER JOIN User ON Post.userID = User.userID LEFT OUTER JOIN Reaction ON Post.postID = Reaction.postID GROUP BY Post.postID`;
+    FROM Post LEFT OUTER JOIN User ON Post.userID = User.userID LEFT OUTER JOIN Reaction ON Post.postID = Reaction.postID GROUP BY Post.postID ORDER BY postID DESC`;
     mysql.query(sqlGetPosts, [userID, userID, userID], function (err, result) {
         if (err) {
             return res.status(500).json(err.message);
@@ -32,15 +32,15 @@ exports.getOnePost = (req, res, next) => {
     const userID = res.locals.userID;
     const postID = req.params.id;
 
-    let sqlGetPosts;
+    let sqlGetPost;
 
-    sqlGetPosts = `SELECT Post.postID, post.userID, legend, gifUrl, post.dateCreation, fistName, lastName, pseudo, avatarUrl,
+    sqlGetPost = `SELECT Post.postID, post.userID, legend, gifUrl, post.dateCreation, fistName, lastName, pseudo, avatarUrl,
     COUNT(CASE WHEN reaction.reaction = 1 then 1 else null end) AS countUp, 
     COUNT(CASE WHEN reaction.reaction = -1 then 1 else null end) AS countDown,
     SUM(CASE WHEN reaction.userID = ? AND reaction.reaction = 1 then 1 WHEN reaction.userID = ? AND reaction.reaction = -1 then -1 else 0 end) AS yourReaction,
     COUNT(CASE WHEN Post.userID = ? then 1 else null end) AS yourPost
     FROM Post LEFT OUTER JOIN User ON Post.userID = User.userID LEFT OUTER JOIN Reaction ON Post.postID = Reaction.postID WHERE Post.postID = ? GROUP BY Post.postID`;
-    mysql.query(sqlGetPosts, [userID, userID, userID, postID], function (err, result) {
+    mysql.query(sqlGetPost, [userID, userID, userID, postID], function (err, result) {
         if (err) {
             return res.status(500).json(err.message);
         };
@@ -80,7 +80,21 @@ exports.deletePost = (req, res, next) => {
 
 // MIDDLEWARE CREATECOMMENT
 exports.createComment = (req, res, next) => {
+    const postID = req.params.id;
+    const userID = res.locals.userID;
+    const body = req.body.body;
 
+    let sqlCreateComment;
+    let values;
+
+    sqlCreateComment = "INSERT INTO post VALUES (NULL, ?, NULL, NULL, ?, ?, CURDATE())";
+    values = [userID, postID, body];
+    mysql.query(sqlCreateComment, values, function (err, result) {
+        if (err) {
+            return res.status(500).json(err.message);
+        };
+        res.status(201).json({ message: "Commentaire crée !" });
+    });
 }
 // FIN MIDDLEWARE
 

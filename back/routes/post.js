@@ -15,10 +15,10 @@ const multer = require("../middleware/multer-config"); // Permet d'envoyer un fi
 // ROUTES
 router.get("/", auth, postCtrl.getAllPosts);
 router.get("/:id", auth, postCtrl.getOnePost);
-router.post("/", auth, postCtrl.createPost);
-router.delete("/:id", postCtrl.deletePost);
-router.post("/:id/comment", postCtrl.createComment);
-router.post("/:id/reaction", postCtrl.reactPost);
+router.post("/", auth, multer, postCtrl.createPost);
+router.delete("/:id", auth, postCtrl.deletePost);
+router.post("/:id/comment", auth, postCtrl.createComment);
+router.post("/:id/reaction", auth, postCtrl.reactPost);
 // FIN ROUTES
 
 module.exports = router;
