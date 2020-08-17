@@ -4,7 +4,6 @@ const app = express();
 const bodyParser = require('body-parser');
 const path = require("path");
 const helmet = require("helmet");
-const sanitizer = require("express-mongo-sanitize");
 // FIN MODULES
 
 // IMPORTATION ROUTES
@@ -28,8 +27,6 @@ app.use((req, res, next) => { // Evite les erreurs CORS
 // BODYPARSER
 app.use(bodyParser.json()); // Rend le corps de la requête exploitable facilement
 // FIN BODYPARSER
-
-app.use(sanitizer());
 
 // ROUTES
 app.use("/images", express.static(path.join(__dirname, "images")));
