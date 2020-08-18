@@ -99,7 +99,7 @@ exports.delete = (req, res, next) => {
                         if (result.affectedRows == 0) {
                             return res.status(400).json({ message: "Suppression échouée" });
                         }
-                        res.status(204).end();
+                        res.status(201).json({ message: "Post supprimé !" });
                     });
                 })
                 .catch(e => res.status(500).json(e));
