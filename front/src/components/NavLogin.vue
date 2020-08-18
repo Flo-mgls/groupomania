@@ -1,6 +1,6 @@
 <template>
     <header>
-      <img alt="Groupomania logo" src="../assets/logo.svg" />
+      <img class="img-fluid" alt="Groupomania logo" src="../assets/logo.svg" />
       <nav>
         <router-link to="/">Se connecter </router-link>|
         <router-link to="/Signup">S'inscrire</router-link>
