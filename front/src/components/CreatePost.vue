@@ -1,11 +1,33 @@
 <template>
   <div class="mb-4">
-    <textarea class="form-control" name="post" cols="130" rows="3" placeholder="Créer un post" v-model="legend"></textarea>
-    <div class="custom-file">
-      <input type="file" class="custom-file-input" v-on:change="sendFile($event)" />
-      <label class="custom-file-label" for="customFile">Choisir un Gif</label>
-    </div>
-    <button class="btn btn-light form-control text-center" type="submit" v-on:click="sendPost()">Publier</button>
+    <form name="createPost">
+      <textarea
+        name="legend"
+        class="form-control"
+        cols="130"
+        rows="3"
+        maxlength="180"
+        required
+        placeholder="Créer un post"
+        v-model="legend"
+      ></textarea>
+      <div class="custom-file">
+        <input
+          name="image"
+          type="file"
+          class="custom-file-input"
+          accept="image/gif"
+          required
+          v-on:change="sendFile($event)"
+        />
+        <label class="custom-file-label" for="image">Choisir un Gif</label>
+      </div>
+      <button
+        class="btn btn-light form-control text-center"
+        type="submit"
+        v-on:click="sendPost()"
+      >Publier</button>
+    </form>
   </div>
 </template>
 
@@ -15,18 +37,27 @@ export default {
   props: [],
   data: () => {
     return {
-      legend: '',
-      image: ''
-    }
+      legend: "",
+      image: "",
+    };
   },
   methods: {
     sendPost() {
-      this.$emit('post-sent', this.$data);
+      const formValid = document
+        .getElementsByName("createPost")[0]
+        .checkValidity();
+      if (formValid) {
+        this.$emit("post-sent", this.$data);
+        document
+        .getElementsByName("post")[0].value = null;
+        document
+        .getElementsByName("image")[0].value = null;
+      }
     },
     sendFile(event) {
       this.$data.image = event.target.files[0];
-    }
-  }
+    },
+  },
 };
 </script>
 

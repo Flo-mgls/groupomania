@@ -1,31 +1,40 @@
 <template>
   <div class="container-fluid">
-    <NavLogin/>
-    <SignupInfo v-on:data-sent="updateDataSignup"/>
-    <LoginInfo validateText="S'inscrire" v-on:data-sent="updateDataLogin" v-on:request-sent="signup"/>
+    <form>
+      <NavLogin />
+      <InfoSignup v-on:data-sent="updateDataSignup" />
+      <InfoLogin
+        validateText="S'inscrire"
+        v-on:data-sent="updateDataLogin"
+        v-on:request-sent="signup"
+      >
+      <template v-slot:messagePassword>Doit contenir: 1 majuscule, 1 minuscule et 1 chiffre (8 caractères minimum)</template>
+        <template v-slot:messageError>{{ message }}</template>
+      </InfoLogin>
+    </form>
   </div>
 </template>
 
 <script>
-
 import NavLogin from "@/components/NavLogin.vue";
-import LoginInfo from "@/components/LoginInfo.vue";
-import SignupInfo from "@/components/SignupInfo.vue";
+import InfoLogin from "@/components/InfoLogin.vue";
+import InfoSignup from "@/components/InfoSignup.vue";
 
 export default {
   name: "Signup",
   components: {
     NavLogin,
-    LoginInfo,
-    SignupInfo,
+    InfoLogin,
+    InfoSignup,
   },
   data: () => {
     return {
-      email: '',
-      password: '',
-      firstName: '',
-      lastName: ''
-    }
+      email: "",
+      password: "",
+      firstName: "",
+      lastName: "",
+      message: null,
+    };
   },
   methods: {
     updateDataSignup(data) {
@@ -37,18 +46,21 @@ export default {
       this.password = data.password;
     },
     signup() {
-      this.$axios.post('user/signup', this.$data)
-      .then( () => {
-        this.$axios.post('user/login', this.$data)
-        .then(data => {
-          sessionStorage.setItem('token', data.data.token);
-          this.$axios.defaults.headers.common['Authorization'] = 'Bearer ' + data.data.token;
-          this.$router.push("Feed");
+      this.$axios
+        .post("user/signup", this.$data)
+        .then(() => {
+          this.$axios.post("user/login", this.$data).then((data) => {
+            sessionStorage.setItem("token", data.data.token);
+            this.$axios.defaults.headers.common["Authorization"] =
+              "Bearer " + data.data.token;
+            this.$router.push("Feed");
+          });
         })
-      })
-      .catch(e => {
-        console.log(e);
-        sessionStorage.removeItem('token');
+        .catch((e) => {
+          if (e.response.status === 500) {
+            this.message = "Erreur serveur";
+          }
+          sessionStorage.removeItem("token");
         });
     },
   },

@@ -8,7 +8,7 @@
         <i class="fas fa-times" :id="post.postID" v-on:click="deletePost($event)"></i>
       </template>
       <template v-slot:postGif>
-        <img src="../assets/images.gif" class="card-img" alt="..." />
+        <img :src="post.gifUrl" class="card-img" alt="..." />
       </template>
       <template v-slot:userAvatar>
         <img src="../assets/avatar.jpg" class="card-img avatar rounded-circle mr-1" alt="..." />
@@ -59,6 +59,14 @@ export default {
         dataAlert.message = "";
       }, 4000);
     },
+    get() {
+      this.$axios
+      .get("post")
+      .then((data) => {
+        this.posts = data.data;
+      })
+      .catch((e) => console.log(e));
+    },
     post(data) {
       const formData = new FormData();
       formData.append('image', data.image);
@@ -67,6 +75,7 @@ export default {
       .post("post", formData)
       .then(() => {
         this.alertActive('alert-success', 'Post publié !');
+        this.get();
       })
       .catch((e) => console.log(e));
     },
@@ -87,12 +96,7 @@ export default {
     },
   },
   mounted() {
-    this.$axios
-      .get("post")
-      .then((data) => {
-        this.posts = data.data;
-      })
-      .catch((e) => console.log(e));
+    this.get();
   },
 };
 </script>
