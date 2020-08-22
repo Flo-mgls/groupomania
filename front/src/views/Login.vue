@@ -1,13 +1,11 @@
 <template>
   <div class="container-fluid">
-    <navLogin>
-      <LoginInfo validateText="Se connecter" v-on:data-sent="updateData" v-on:request-sent="login"/>
-    </navLogin>
+    <navLogin />
+    <LoginInfo validateText="Se connecter" v-on:data-sent="updateData" v-on:request-sent="login" />
   </div>
 </template>
 
 <script>
-
 import NavLogin from "@/components/NavLogin.vue";
 import LoginInfo from "@/components/LoginInfo.vue";
 
@@ -19,9 +17,9 @@ export default {
   },
   data: () => {
     return {
-      email: '',
-      password: ''
-    }
+      email: "",
+      password: "",
+    };
   },
   methods: {
     updateData(data) {
@@ -29,12 +27,23 @@ export default {
       this.password = data.password;
     },
     login() {
-      this.$axios.post('user/login', this.$data)
-      .then(data => {
-        this.$axios.defaults.headers.common['Authorization'] = data.data.token;
+      this.$axios
+        .post("user/login", this.$data)
+        .then((data) => {
+          sessionStorage.setItem('token', data.data.token);
+          this.$axios.defaults.headers.common["Authorization"] =
+            'Bearer ' + data.data.token;
+          this.$router.push("Feed");
         })
-      .catch(e => console.log(e));
+        .catch(e => {
+        console.log(e);
+        sessionStorage.removeItem('token');
+        });
     },
+  },
+  mounted() {
+    sessionStorage.removeItem('token');
+    delete this.$axios.defaults.headers.common["Authorization"];
   }
 };
 </script>

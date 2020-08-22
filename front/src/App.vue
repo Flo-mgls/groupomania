@@ -1,7 +1,7 @@
 <template>
   <div id="app">
-    <div class="container">
-    <router-view/>
+    <div class="container-fluid container-md">
+      <router-view />
     </div>
   </div>
 </template>
@@ -13,6 +13,9 @@
   -moz-osx-font-smoothing: grayscale;
   text-align: center;
   color: #2c3e50;
+  a {
+    color: #2c3e50;
+  }
 }
 
 nav {

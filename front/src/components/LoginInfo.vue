@@ -1,5 +1,5 @@
 <template>
-  <div class="container-fluid">
+  <div>
     <div class="row mb-2">
       <div class="col-lg-4 col-md-8 offset-lg-4 offset-md-2">
         <input class="form-control text-center" type="email" placeholder="Votre email" id="email" v-model="email" v-on:input="sendData"/>

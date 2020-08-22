@@ -2,6 +2,7 @@ import Vue from 'vue'
 import VueRouter from 'vue-router'
 import Login from '../views/Login.vue'
 import Signup from '../views/Signup.vue'
+import Feed from '../views/Feed.vue'
 
 Vue.use(VueRouter)
 
@@ -15,6 +16,11 @@ Vue.use(VueRouter)
     path: '/Signup',
     name: 'Signup',
     component: Signup
+  },
+  {
+    path: '/Feed',
+    name: 'Feed',
+    component: Feed
   }
 ]
 

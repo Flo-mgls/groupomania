@@ -9,7 +9,7 @@ exports.getAllPosts = (req, res, next) => {
 
     let sqlGetPosts;
 
-    sqlGetPosts = `SELECT Post.postID, post.userID, legend, gifUrl, post.dateCreation, fistName, lastName, pseudo, avatarUrl,
+    sqlGetPosts = `SELECT Post.postID, post.userID, legend, gifUrl, post.dateCreation, firstName, lastName, pseudo, avatarUrl,
     COUNT(CASE WHEN reaction.reaction = 1 then 1 else null end) AS countUp, 
     COUNT(CASE WHEN reaction.reaction = -1 then 1 else null end) AS countDown,
     SUM(CASE WHEN reaction.userID = ? AND reaction.reaction = 1 then 1 WHEN reaction.userID = ? AND reaction.reaction = -1 then -1 else 0 end) AS yourReaction,
@@ -34,7 +34,7 @@ exports.getOnePost = (req, res, next) => {
 
     let sqlGetPost;
 
-    sqlGetPost = `SELECT Post.postID, post.userID, legend, gifUrl, post.dateCreation, fistName, lastName, pseudo, avatarUrl,
+    sqlGetPost = `SELECT Post.postID, post.userID, legend, gifUrl, post.dateCreation, firstName, lastName, pseudo, avatarUrl,
     COUNT(CASE WHEN reaction.reaction = 1 then 1 else null end) AS countUp, 
     COUNT(CASE WHEN reaction.reaction = -1 then 1 else null end) AS countDown,
     SUM(CASE WHEN reaction.userID = ? AND reaction.reaction = 1 then 1 WHEN reaction.userID = ? AND reaction.reaction = -1 then -1 else 0 end) AS yourReaction,
@@ -56,7 +56,9 @@ exports.getOnePost = (req, res, next) => {
 exports.createPost = (req, res, next) => {
     const userID = res.locals.userID;
     const legend = req.body.legend;
-    const gifUrl = req.body.gifUrl;
+    const gifUrl = `${req.protocol}://${req.get("host")}/images/${req.file.filename}`;
+    console.log(gifUrl);
+    console.log(req.file.filename)
 
     let sqlCreatePost;
     let values;
@@ -93,7 +95,7 @@ exports.deletePost = (req, res, next) => {
                 if (err) {
                     return res.status(500).json(err.message);
                 };
-                res.status(201).json({ message: "Post supprimé !" });
+                res.status(200).json({ message: "Post supprimé !" });
             });
         })
     });

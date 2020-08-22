@@ -1,0 +1,45 @@
+<template>
+  <header>
+    <nav class="navbar navbar-expand-lg navbar-light">
+      <h1 class="navbar-brand w-50">
+        <router-link to="/Feed">
+          <img class="img-fluid" alt="Groupomania" src="../assets/logo-feed.svg" />
+        </router-link>
+      </h1>
+      <button
+        class="navbar-toggler"
+        type="button"
+        data-toggle="collapse"
+        data-target="#navbarNavAltMarkup"
+        aria-controls="navbarNavAltMarkup"
+        aria-expanded="false"
+        aria-label="Toggle navigation"
+      >
+        <span class="navbar-toggler-icon"></span>
+      </button>
+      <div
+        class="collapse navbar-collapse align-self-end justify-content-end"
+        id="navbarNavAltMarkup"
+      >
+        <div class="navbar-nav">
+          <p class="mr-md-4 text-right">
+            <router-link to="/">Mon profil</router-link>
+          </p>
+          <p class="text-right">
+            <router-link to="/">Se déconnecter</router-link>
+          </p>
+        </div>
+      </div>
+    </nav>
+  </header>
+</template>
+
+<script>
+export default {
+  name: "NavFeed",
+  props: [],
+};
+</script>
+
+<style scoped lang="scss">
+</style>

@@ -1,5 +1,5 @@
 <template>
-  <div class="container-fluid">
+  <div>
     <div class="row">
       <div class="col-lg-2 col-md-4 offset-lg-4 offset-md-2 mb-2">
         <input class="form-control text-center" type="text" placeholder="Votre prénom" id="firstName" v-model="firstName" v-on:input="sendData"/>
@@ -12,6 +12,7 @@
 </template>
 
 <script>
+
 export default {
   name: "SignupInfo",
   props: [],
@@ -27,6 +28,7 @@ export default {
     }
   }
 };
+
 </script>
 
 <style scoped lang="scss">

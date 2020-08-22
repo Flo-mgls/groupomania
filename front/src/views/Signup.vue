@@ -1,9 +1,8 @@
 <template>
   <div class="container-fluid">
-    <NavLogin>
-      <SignupInfo v-on:data-sent="updateDataSignup"/>
-      <LoginInfo validateText="S'inscrire" v-on:data-sent="updateDataLogin" v-on:request-sent="signup"/>
-    </NavLogin>
+    <NavLogin/>
+    <SignupInfo v-on:data-sent="updateDataSignup"/>
+    <LoginInfo validateText="S'inscrire" v-on:data-sent="updateDataLogin" v-on:request-sent="signup"/>
   </div>
 </template>
 
@@ -42,11 +41,15 @@ export default {
       .then( () => {
         this.$axios.post('user/login', this.$data)
         .then(data => {
-          this.$axios.defaults.headers.common['Authorization'] = data.data.token;
-          console.log(this.$axios.defaults.headers.common['Authorization'])
+          sessionStorage.setItem('token', data.data.token);
+          this.$axios.defaults.headers.common['Authorization'] = 'Bearer ' + data.data.token;
+          this.$router.push("Feed");
         })
       })
-      .catch(e => console.log(e));
+      .catch(e => {
+        console.log(e);
+        sessionStorage.removeItem('token');
+        });
     },
   },
 };
