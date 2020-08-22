@@ -25,7 +25,7 @@
       <button
         class="btn btn-light form-control text-center"
         type="submit"
-        v-on:click="sendPost()"
+        v-on:click.prevent="sendPost()"
       >Publier</button>
     </form>
   </div>
@@ -49,7 +49,7 @@ export default {
       if (formValid) {
         this.$emit("post-sent", this.$data);
         document
-        .getElementsByName("post")[0].value = null;
+        .getElementsByName("legend")[0].value = null;
         document
         .getElementsByName("image")[0].value = null;
       }

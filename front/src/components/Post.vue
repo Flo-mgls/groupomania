@@ -1,5 +1,5 @@
 <template>
-  <article class="mb-3">
+  <article class="mb-3" :id="idPost">
     <div class="row no-gutters post align-items-center">
       <slot name="postDelete"></slot>
       <div class="col-md-4 order-last">
@@ -26,6 +26,9 @@
         </div>
       </div>
     </div>
+    <div class="row">
+      <div class="col-12"><slot name="createComment"></slot></div>
+    </div>
     <div class="border-bottom">
       <div class="row">
         <div class="col-4 col-md-2">
@@ -42,8 +45,10 @@
         </div>
         <div class="col-4 col-md-4">
           <p>
-            <router-link class="d-md-none" to="/"><i class="fas fa-comments"></i></router-link>
-            <router-link class="d-none d-md-block" to="/">Commenter</router-link>
+            <a class="d-md-none">
+              <i class="fas fa-comments"></i>
+            </a>
+            <a class="d-none d-md-block" v-on:click="displayCommentInput">Commenter</a>
           </p>
         </div>
         <div class="col-12 col-md-4">
@@ -61,7 +66,12 @@
 <script>
 export default {
   name: "Post",
-  props: [],
+  props: ['idPost'],
+  methods: {
+    displayCommentInput() {
+      this.$emit('d-comment-input');
+    }
+  }
 };
 </script>
 
@@ -70,6 +80,6 @@ i:hover {
   color: rgb(233, 68, 38);
 }
 .post {
- position: relative;
+  position: relative;
 }
 </style>

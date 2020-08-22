@@ -1,25 +1,54 @@
 <template>
   <div>
-    <NavFeed />
-    <CreatePost v-on:post-sent="post" />
-    <Alert v-if="alert.active" :alertType="alert.type" :alertMessage="alert.message" />
-    <Post v-for="post in posts" :key="post.postID">
-      <template v-slot:postDelete v-if="post.yourPost > 0">
-        <i class="fas fa-times" :id="post.postID" v-on:click="deletePost($event)"></i>
-      </template>
-      <template v-slot:postGif>
-        <img :src="post.gifUrl" class="card-img" alt="..." />
-      </template>
-      <template v-slot:userAvatar>
-        <img src="../assets/avatar.jpg" class="card-img avatar rounded-circle mr-1" alt="..." />
-      </template>
-      <template v-slot:userName>{{ post.firstName + ' ' + post.lastName }}</template>
-      <template v-slot:userPseudo v-if="post.pseudo !== null">{{ '@' + post.pseudo }}</template>
-      <template v-slot:postLegend>{{ post.legend }}</template>
-      <template v-slot:postDate>{{ post.dateCreation }}</template>
-      <template v-slot:postUp>{{ post.countUp }}</template>
-      <template v-slot:postDown>{{ post.countDown }}</template>
-    </Post>
+    <Alert v-if="!connected" :alertType="alert.type" :alertMessage="alert.message" />
+    <div v-else>
+      <NavFeed />
+      <CreatePost v-on:post-sent="post" />
+      <Alert
+        v-if="alert.active && !alert.activeComment"
+        :alertType="alert.type"
+        :alertMessage="alert.message"
+      />
+      <Post
+        v-for="post in posts"
+        :key="post.postID"
+        :idPost="post.postID"
+        v-on:d-comment-input="dCommentInput(post.postID)"
+      >
+        <template v-slot:postDelete v-if="post.yourPost > 0">
+          <i class="fas fa-times" v-on:click="deletePost(post.postID)"></i>
+        </template>
+        <template v-slot:postGif>
+          <img :src="post.gifUrl" class="card-img" alt="..." />
+        </template>
+        <template v-slot:userAvatar>
+          <img src="../assets/avatar.jpg" class="card-img avatar rounded-circle mr-1" alt="..." />
+        </template>
+        <template v-slot:userName>{{ post.firstName + ' ' + post.lastName }}</template>
+        <template v-slot:userPseudo v-if="post.pseudo !== null">{{ '@' + post.pseudo }}</template>
+        <template v-slot:postLegend>{{ post.legend }}</template>
+        <template v-slot:createComment>
+          <CreateComment
+            v-on:comment-sent="updateBody"
+            v-if="commentInputShow && commentID === post.postID"
+          >
+            <button
+              class="btn btn-light form-control text-center"
+              type="submit"
+              v-on:click.prevent="postComment(post.postID)"
+            >Publier</button>
+          </CreateComment>
+          <Alert
+            v-if="alert.active && commentID === post.postID"
+            :alertType="alert.type"
+            :alertMessage="alert.message"
+          />
+        </template>
+        <template v-slot:postDate>{{ post.dateCreation }}</template>
+        <template v-slot:postUp>{{ post.countUp }}</template>
+        <template v-slot:postDown>{{ post.countDown }}</template>
+      </Post>
+    </div>
   </div>
 </template>
 
@@ -28,6 +57,7 @@ import NavFeed from "@/components/NavFeed.vue";
 import Post from "@/components/Post.vue";
 import Alert from "@/components/Alert.vue";
 import CreatePost from "@/components/CreatePost.vue";
+import CreateComment from "@/components/CreateComment.vue";
 
 export default {
   name: "Feed",
@@ -35,19 +65,31 @@ export default {
     NavFeed,
     Post,
     Alert,
-    CreatePost
+    CreatePost,
+    CreateComment,
   },
   data: () => {
     return {
+      connected: true,
       alert: {
         active: false,
+        activeComment: false,
         type: "",
-        message: ""
+        message: "",
       },
       posts: [],
+      body: "",
+      commentInputShow: false,
+      commentID: "",
     };
   },
   methods: {
+    alertConstant(type, message) {
+      const dataAlert = this.$data.alert;
+      this.connected = false;
+      dataAlert.type = type;
+      dataAlert.message = message;
+    },
     alertActive(type, message) {
       const dataAlert = this.$data.alert;
       dataAlert.active = true;
@@ -55,44 +97,77 @@ export default {
       dataAlert.message = message;
       setTimeout(function () {
         dataAlert.active = false;
+        dataAlert.activeComment = false;
         dataAlert.type = "";
         dataAlert.message = "";
       }, 4000);
     },
     get() {
       this.$axios
-      .get("post")
-      .then((data) => {
-        this.posts = data.data;
-      })
-      .catch((e) => console.log(e));
+        .get("post")
+        .then((data) => {
+          this.posts = data.data;
+        })
+        .catch((e) => {
+          if (e.response.status === 401) {
+            this.alertConstant("alert-danger mt-5", "Veuillez vous connecter");
+          }
+        });
     },
     post(data) {
       const formData = new FormData();
-      formData.append('image', data.image);
-      formData.append('legend', data.legend);
+      formData.append("image", data.image);
+      formData.append("legend", data.legend);
       this.$axios
-      .post("post", formData)
-      .then(() => {
-        this.alertActive('alert-success', 'Post publié !');
-        this.get();
-      })
-      .catch((e) => console.log(e));
+        .post("post", formData)
+        .then(() => {
+          this.get();
+          this.alertActive("alert-success", "Post publié !");
+        })
+        .catch((e) => console.log(e));
     },
-    deletePost(event) {
+    deletePost(postID) {
       this.$axios
-        .delete("post/" + event.target.id)
+        .delete("post/" + postID)
         .then(() => {
           const indexPost = this.$data.posts
             .map((e) => {
               return e.postID;
             })
-            .indexOf(parseInt(event.target.id));
+            .indexOf(parseInt(postID));
           this.$data.posts.splice(indexPost, 1);
 
-          this.alertActive('alert-warning', 'Post supprimé !');
+          this.alertActive("alert-warning", "Post supprimé !");
         })
         .catch((e) => console.log(e));
+    },
+    dCommentInput(postID) {
+      if (this.commentInputShow) {
+        this.commentID = postID;
+      } else {
+        this.commentInputShow = true;
+        this.commentID = postID;
+      }
+    },
+    updateBody(data) {
+      this.body = data.body;
+    },
+    postComment(postID) {
+      const formValid = document
+        .getElementsByName("formComment")[0]
+        .checkValidity();
+      if (formValid) {
+        this.$axios
+          .post(`post/${postID}/comment`, { body: this.body })
+          .then(() => {
+            this.commentInputShow = false;
+            this.alert.activeComment = true;
+            this.alertActive("alert-success mt-1", "Commentaire publié !");
+          })
+          .catch((e) => {
+            console.log(e);
+          });
+      }
     },
   },
   mounted() {

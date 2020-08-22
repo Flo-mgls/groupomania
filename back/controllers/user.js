@@ -18,7 +18,7 @@ exports.signup = (req, res, next) => {
             let sqlSignup;
             let values;
 
-            sqlSignup = "INSERT INTO user VALUES (NULL, ?, ?, ?, NULL, ?, NULL, avatarUrl, CURDATE())";
+            sqlSignup = "INSERT INTO user VALUES (NULL, ?, ?, ?, NULL, ?, NULL, avatarUrl, NOW())";
             values = [email, firstName, lastName, password,];
             mysql.query(sqlSignup, values, function (err, result) {
                 if (err) {
@@ -114,7 +114,7 @@ exports.profile = (req, res, next) => {
 
     let sqlGetUser;
 
-    sqlGetUser = "SELECT email, pseudo, bio, avatarUrl FROM User WHERE userID = ?";
+    sqlGetUser = "SELECT email, pseudo, bio, avatarUrl, DATE_FORMAT(post.dateCreation, 'le %e %M %Y à %kh%i') AS dateCreation FROM User WHERE userID = ?";
     mysql.query(sqlGetUser, [userID], function (err, result) {
         if (err) {
             return res.status(500).json(err.message);

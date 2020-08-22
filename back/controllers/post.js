@@ -9,12 +9,12 @@ exports.getAllPosts = (req, res, next) => {
 
     let sqlGetPosts;
 
-    sqlGetPosts = `SELECT Post.postID, post.userID, legend, gifUrl, post.dateCreation, firstName, lastName, pseudo, avatarUrl,
+    sqlGetPosts = `SELECT Post.postID, post.userID, legend, gifUrl, DATE_FORMAT(post.dateCreation, 'le %e %M %Y à %kh%i') AS dateCreation, firstName, lastName, pseudo, avatarUrl,
     COUNT(CASE WHEN reaction.reaction = 1 then 1 else null end) AS countUp, 
     COUNT(CASE WHEN reaction.reaction = -1 then 1 else null end) AS countDown,
     SUM(CASE WHEN reaction.userID = ? AND reaction.reaction = 1 then 1 WHEN reaction.userID = ? AND reaction.reaction = -1 then -1 else 0 end) AS yourReaction,
     COUNT(CASE WHEN Post.userID = ? then 1 else null end) AS yourPost
-    FROM Post LEFT OUTER JOIN User ON Post.userID = User.userID LEFT OUTER JOIN Reaction ON Post.postID = Reaction.postID GROUP BY Post.postID ORDER BY postID DESC`;
+    FROM Post LEFT OUTER JOIN User ON Post.userID = User.userID LEFT OUTER JOIN Reaction ON Post.postID = Reaction.postID WHERE post.postIDComment IS NULL GROUP BY Post.postID ORDER BY postID DESC`;
     mysql.query(sqlGetPosts, [userID, userID, userID], function (err, result) {
         if (err) {
             return res.status(500).json(err.message);
@@ -34,7 +34,7 @@ exports.getOnePost = (req, res, next) => {
 
     let sqlGetPost;
 
-    sqlGetPost = `SELECT Post.postID, post.userID, legend, gifUrl, post.dateCreation, firstName, lastName, pseudo, avatarUrl,
+    sqlGetPost = `SELECT Post.postID, post.userID, legend, gifUrl, DATE_FORMAT(post.dateCreation, 'le %e %M %Y à %kh%i') AS dateCreation, firstName, lastName, pseudo, avatarUrl,
     COUNT(CASE WHEN reaction.reaction = 1 then 1 else null end) AS countUp, 
     COUNT(CASE WHEN reaction.reaction = -1 then 1 else null end) AS countDown,
     SUM(CASE WHEN reaction.userID = ? AND reaction.reaction = 1 then 1 WHEN reaction.userID = ? AND reaction.reaction = -1 then -1 else 0 end) AS yourReaction,
@@ -63,7 +63,7 @@ exports.createPost = (req, res, next) => {
     let sqlCreatePost;
     let values;
 
-    sqlCreatePost = "INSERT INTO post VALUES (NULL, ?, ?, ?, NULL, NULL, CURDATE())";
+    sqlCreatePost = "INSERT INTO post VALUES (NULL, ?, ?, ?, NULL, NULL, NOW())";
     values = [userID, legend, gifUrl];
     mysql.query(sqlCreatePost, values, function (err, result) {
         if (err) {
@@ -111,7 +111,7 @@ exports.createComment = (req, res, next) => {
     let sqlCreateComment;
     let values;
 
-    sqlCreateComment = "INSERT INTO post VALUES (NULL, ?, NULL, NULL, ?, ?, CURDATE())";
+    sqlCreateComment = "INSERT INTO post VALUES (NULL, ?, NULL, NULL, ?, ?, NOW())";
     values = [userID, postID, body];
     mysql.query(sqlCreateComment, values, function (err, result) {
         if (err) {
@@ -131,7 +131,7 @@ exports.reactPost = (req, res, next) => {
     let sqlReaction;
     let values;
 
-    sqlReaction = `INSERT INTO Reaction VALUES (?, ?, ?, CURDATE()) ON DUPLICATE KEY UPDATE reaction = ?`
+    sqlReaction = `INSERT INTO Reaction VALUES (?, ?, ?, NOW()) ON DUPLICATE KEY UPDATE reaction = ?`
     values = [userID, postID, reaction, reaction];
     mysql.query(sqlReaction, values, function (err, result) {
         if (err) {

@@ -8,6 +8,7 @@ exports.connection = mysql.createPool({
     host     : 'localhost',
     user     : `${env.dbId}`,
     password : `${env.dbPW}`,
-    database : 'groupomania'
+    database : 'groupomania',
+    timezone : 'local'
   });
 // FIN CONNEXION 
