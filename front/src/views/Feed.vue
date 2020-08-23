@@ -14,6 +14,10 @@
         :key="post.postID"
         :idPost="post.postID"
         v-on:d-comment-input="dCommentInput(post.postID)"
+        v-on:reaction-down="sendReaction(post.postID, -1)"
+        v-on:reaction-up="sendReaction(post.postID, 1)"
+        v-on:reaction-none="sendReaction(post.postID, 0)"
+        :reaction="post.yourReaction"
       >
         <template v-slot:postDelete v-if="post.yourPost > 0">
           <i class="fas fa-times" v-on:click="deletePost(post.postID)"></i>
@@ -138,6 +142,14 @@ export default {
           this.$data.posts.splice(indexPost, 1);
 
           this.alertActive("alert-warning", "Post supprimé !");
+        })
+        .catch((e) => console.log(e));
+    },
+    sendReaction(postID, reaction) {
+      this.$axios
+        .post(`post/${postID}/reaction`, {reaction: reaction})
+        .then(() => {
+          this.get();
         })
         .catch((e) => console.log(e));
     },
