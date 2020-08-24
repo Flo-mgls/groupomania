@@ -1,14 +1,8 @@
 <template>
-  <article class="mb-3" :id="idPost">
-    <slot name="postDelete"></slot>
-    <div
-      class="row no-gutters post align-items-center"
-      @click="() => $router.push({ name: 'FeedID', params: {id: idPost} })"
-    >
-      <div class="col-md-4 order-last">
-        <slot name="postGif"></slot>
-      </div>
-      <div class="col-md-8">
+  <article class="mb-3" :id="idComment">
+    <slot name="commentDelete"></slot>
+    <div class="row no-gutters align-items-center">
+      <div class="col-12">
         <div class="container">
           <div class="row">
             <div class="col-12">
@@ -23,43 +17,30 @@
           </div>
           <div class="row text-center pt-3">
             <p class="col-12 h5-lg">
-              <slot name="postLegend"></slot>
+              <slot name="commentBody"></slot>
             </p>
           </div>
         </div>
       </div>
     </div>
-    <div class="row">
-      <div class="col-12">
-        <slot name="createComment"></slot>
-      </div>
-    </div>
     <div class="border-bottom">
       <div class="row">
-        <div class="col-4 col-md-2">
+        <div class="col-6 col-md-2">
           <i class="fas fa-angle-up fa-lg" :class="reactionUp" v-on:click="sendReactionUp"></i>
           <span class="ml-1">
-            <slot name="postUp"></slot>
+            <slot name="commentUp"></slot>
           </span>
         </div>
-        <div class="col-4 col-md-2">
+        <div class="col-6 col-md-2">
           <i class="fas fa-angle-down fa-lg" :class="reactionDown" v-on:click="sendReactionDown"></i>
           <span class="ml-1">
-            <slot name="postDown"></slot>
+            <slot name="commentDown"></slot>
           </span>
         </div>
-        <div class="col-4 col-md-4">
-          <p>
-            <a class="d-md-none">
-              <i class="fas fa-comments" v-on:click="displayCommentInput"></i>
-            </a>
-            <a class="d-none d-md-block" v-on:click="displayCommentInput">Commenter</a>
-          </p>
-        </div>
-        <div class="col-12 col-md-4">
+        <div class="col-12 col-md-4 offset-md-4">
           <p>
             <small class="text-muted">
-              <slot name="postDate"></slot>
+              <slot name="commentDate"></slot>
             </small>
           </p>
         </div>
@@ -70,8 +51,8 @@
 
 <script>
 export default {
-  name: "Post",
-  props: ["idPost", "reaction"],
+  name: "Comment",
+  props: ["idComment", "reaction"],
   data: () => {
     return {
       reactionUp: "",
@@ -79,9 +60,6 @@ export default {
     };
   },
   methods: {
-    displayCommentInput() {
-      this.$emit("d-comment-input");
-    },
     sendReactionUp() {
       if (this.reaction === 1) {
         this.$emit("reaction-none");

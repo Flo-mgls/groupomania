@@ -1,6 +1,6 @@
 <template>
   <div class="container-fluid">
-    <form>
+    <form onsubmit="return false">
       <NavLogin />
       <InfoSignup v-on:data-sent="updateDataSignup" />
       <InfoLogin

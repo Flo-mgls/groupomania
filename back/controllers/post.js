@@ -14,7 +14,7 @@ exports.getAllPosts = (req, res, next) => {
     COUNT(CASE WHEN reaction.reaction = -1 then 1 else null end) AS countDown,
     SUM(CASE WHEN reaction.userID = ? AND reaction.reaction = 1 then 1 WHEN reaction.userID = ? AND reaction.reaction = -1 then -1 else 0 end) AS yourReaction,
     COUNT(CASE WHEN Post.userID = ? then 1 else null end) AS yourPost
-    FROM Post LEFT OUTER JOIN User ON Post.userID = User.userID LEFT OUTER JOIN Reaction ON Post.postID = Reaction.postID WHERE post.postIDComment IS NULL GROUP BY Post.postID ORDER BY postID DESC`;
+    FROM Post LEFT OUTER JOIN User ON Post.userID = User.userID LEFT OUTER JOIN Reaction ON Post.postID = Reaction.postID WHERE post.postIDComment IS NULL GROUP BY Post.postID ORDER BY post.postID DESC`;
     mysql.query(sqlGetPosts, [userID, userID, userID], function (err, result) {
         if (err) {
             return res.status(500).json(err.message);
@@ -34,12 +34,12 @@ exports.getOnePost = (req, res, next) => {
 
     let sqlGetPost;
 
-    sqlGetPost = `SELECT Post.postID, post.userID, legend, gifUrl, DATE_FORMAT(post.dateCreation, 'le %e %M %Y à %kh%i') AS dateCreation, firstName, lastName, pseudo, avatarUrl,
+    sqlGetPost = `SELECT Post.postID, post.userID, legend, body, gifUrl, DATE_FORMAT(post.dateCreation, 'le %e %M %Y à %kh%i') AS dateCreation, firstName, lastName, pseudo, avatarUrl,
     COUNT(CASE WHEN reaction.reaction = 1 then 1 else null end) AS countUp, 
     COUNT(CASE WHEN reaction.reaction = -1 then 1 else null end) AS countDown,
     SUM(CASE WHEN reaction.userID = ? AND reaction.reaction = 1 then 1 WHEN reaction.userID = ? AND reaction.reaction = -1 then -1 else 0 end) AS yourReaction,
     COUNT(CASE WHEN Post.userID = ? then 1 else null end) AS yourPost
-    FROM Post LEFT OUTER JOIN User ON Post.userID = User.userID LEFT OUTER JOIN Reaction ON Post.postID = Reaction.postID WHERE Post.postID = ? OR Post.postIDComment = ? GROUP BY Post.postID`;
+    FROM Post LEFT OUTER JOIN User ON Post.userID = User.userID LEFT OUTER JOIN Reaction ON Post.postID = Reaction.postID WHERE Post.postID = ? OR Post.postIDComment = ? GROUP BY Post.postID ORDER BY post.postID DESC`;
     mysql.query(sqlGetPost, [userID, userID, userID, postID, postID], function (err, result) {
         if (err) {
             return res.status(500).json(err.message);
@@ -84,12 +84,18 @@ exports.deletePost = (req, res, next) => {
 
     sqlSelectPost = "SELECT gifUrl FROM Post WHERE postID = ?";
     mysql.query(sqlSelectPost, [postID], function (err, result) {
-        if (err) {
-            return res.status(500).json(err.message);
-        };
-
-        const filename = result[0].gifUrl.split("/images/")[1];
-        fs.unlink(`images/${filename}`, () => { // On supprime le fichier image en amont
+        if (result > 0) {
+            const filename = result[0].gifUrl.split("/images/")[1];
+            fs.unlink(`images/${filename}`, () => { // On supprime le fichier image en amont
+                sqlDeletePost = "DELETE FROM Post WHERE userID = ? AND postID = ?";
+                mysql.query(sqlDeletePost, [userID, postID], function (err, result) {
+                    if (err) {
+                        return res.status(500).json(err.message);
+                    };
+                    res.status(200).json({ message: "Post supprimé !" });
+                });
+            })
+        } else {
             sqlDeletePost = "DELETE FROM Post WHERE userID = ? AND postID = ?";
             mysql.query(sqlDeletePost, [userID, postID], function (err, result) {
                 if (err) {
@@ -97,7 +103,12 @@ exports.deletePost = (req, res, next) => {
                 };
                 res.status(200).json({ message: "Post supprimé !" });
             });
-        })
+        }
+        if (err) {
+            return res.status(500).json(err.message);
+        };
+
+
     });
 }
 // FIN MIDDLEWARE

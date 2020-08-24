@@ -1,5 +1,5 @@
 <template>
-  <header>
+  <header class="mb-1 mb-md-3">
     <nav class="navbar navbar-expand-lg navbar-light">
       <h1 class="navbar-brand w-50">
         <router-link to="/Feed">

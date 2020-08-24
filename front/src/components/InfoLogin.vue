@@ -35,6 +35,9 @@
           type="submit"
           v-on:click="sendRequest"
         >{{ validateText }}</button>
+        <p class="text-muted">
+          <slot name="messagePassword"></slot>
+        </p>
         <p class="text-danger">
           <slot name="messageError"></slot>
         </p>
