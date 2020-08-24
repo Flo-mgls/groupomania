@@ -4,6 +4,7 @@ import Login from '../views/Login.vue'
 import Signup from '../views/Signup.vue'
 import Feed from '../views/Feed.vue'
 import FeedID from '../views/FeedID.vue'
+import Profile from '../views/Profile.vue'
 
 Vue.use(VueRouter)
 
@@ -27,6 +28,11 @@ Vue.use(VueRouter)
     path: '/Feed/:id',
     name: 'FeedID',
     component: FeedID
+  },
+  {
+    path: '/Profile/:id',
+    name: 'Profile',
+    component: Profile
   }
 ]
 

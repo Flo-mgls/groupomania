@@ -1,12 +1,15 @@
 <template>
-  <article class="mb-3" :id="idComment">
+  <article class="mb-3">
     <slot name="commentDelete"></slot>
     <div class="row no-gutters align-items-center">
       <div class="col-12">
         <div class="container">
           <div class="row">
             <div class="col-12">
-              <p class="mb-0 font-weight-bold">
+              <p
+                class="mb-0 font-weight-bold"
+                @click="goToProfile(idUser)"
+              >
                 <slot name="userAvatar"></slot>
                 <slot name="userName"></slot>
                 <span class="text-muted ml-1 font-weight-normal">
@@ -52,7 +55,7 @@
 <script>
 export default {
   name: "Comment",
-  props: ["idComment", "reaction"],
+  props: ["idUser", "reaction"],
   data: () => {
     return {
       reactionUp: "",
@@ -83,6 +86,9 @@ export default {
         this.reactionUp = "reactionNone";
         this.reactionDown = "reactionNone";
       }
+    },
+    goToProfile(idUser) {
+      this.$router.push({ name: "Profile", params: { id: idUser } });
     },
   },
   mounted() {

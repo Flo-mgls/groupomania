@@ -10,7 +10,7 @@
       />
       <Post
         v-if="posts"
-        :idPost="posts[indexLastPost].postID"
+        :idUser="posts[indexLastPost].userID"
         v-on:d-comment-input="dCommentInput(posts[indexLastPost].postID)"
         v-on:reaction-down="sendReaction(posts[indexLastPost].postID, -1)"
         v-on:reaction-up="sendReaction(posts[indexLastPost].postID, 1)"
@@ -24,7 +24,7 @@
           <img :src="posts[indexLastPost].gifUrl" class="card-img" alt="..." />
         </template>
         <template v-slot:userAvatar>
-          <img src="../assets/avatar.jpg" class="card-img avatar rounded-circle mr-1" alt="..." />
+          <img :src="posts[indexLastPost].avatarUrl" class="card-img avatar rounded-circle mr-1" alt="..." />
         </template>
         <template
           v-slot:userName
@@ -59,7 +59,7 @@
       <Comment
         v-for="comment in comments"
         :key="comment.postID"
-        :idComment="comment.postID"
+        :idUser="comment.userID"
         v-on:reaction-down="sendReaction(comment.postID, -1)"
         v-on:reaction-up="sendReaction(comment.postID, 1)"
         v-on:reaction-none="sendReaction(comment.postID, 0)"
@@ -69,7 +69,7 @@
           <i class="fas fa-times" v-on:click="deletePost(comment.postID)"></i>
         </template>
         <template v-slot:userAvatar>
-          <img src="../assets/avatar.jpg" class="card-img avatar rounded-circle mr-1" alt="..." />
+          <img :src="comment.avatarUrl" class="card-img avatar rounded-circle mr-1" alt="..." />
         </template>
         <template v-slot:userName>{{ comment.firstName + ' ' + comment.lastName }}</template>
         <template v-slot:userPseudo v-if="comment.pseudo !== null">{{ '@' + comment.pseudo }}</template>

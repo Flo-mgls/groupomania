@@ -99,7 +99,7 @@ exports.delete = (req, res, next) => {
                         if (result.affectedRows == 0) {
                             return res.status(400).json({ message: "Suppression échouée" });
                         }
-                        res.status(201).json({ message: "Post supprimé !" });
+                        res.status(200).json({ message: "Utilisateur supprimé !" });
                     });
                 })
                 .catch(e => res.status(500).json(e));
@@ -110,12 +110,18 @@ exports.delete = (req, res, next) => {
 
 // MIDDLEWARE PROFILE
 exports.profile = (req, res, next) => {
-    const userID = req.params.id;
+    const userID = res.locals.userID;
+    let userIDAsked = req.params.id;
 
     let sqlGetUser;
 
-    sqlGetUser = "SELECT email, pseudo, bio, avatarUrl, DATE_FORMAT(post.dateCreation, 'le %e %M %Y à %kh%i') AS dateCreation FROM User WHERE userID = ?";
-    mysql.query(sqlGetUser, [userID], function (err, result) {
+    if (userIDAsked === "yourProfile") {
+        userIDAsked = userID;
+    }
+
+    sqlGetUser = `SELECT email, firstName, lastName, pseudo, bio, avatarUrl, DATE_FORMAT(dateCreation, 'Inscrit depuis le %e %M %Y à %kh%i') AS dateCreation,
+    COUNT(CASE WHEN userID = ? then 1 else null end) AS yourProfile FROM User WHERE userID = ?`;
+    mysql.query(sqlGetUser, [userID, userIDAsked], function (err, result) {
         if (err) {
             return res.status(500).json(err.message);
         };
@@ -151,8 +157,8 @@ exports.modify = (req, res, next) => {
 
             const filename = result[0].avatarUrl.split("/images/")[1];
             fs.unlink(`images/${filename}`, () => { // On supprime le fichier image en amont
-                sqlModifyUser = "UPDATE User SET avatarUrl=? WHERE userID = ?";
-                mysql.query(sqlModifyUser, [userID], function (err, result) {
+                sqlModifyUser = "UPDATE User SET avatarUrl = ? WHERE userID = ?";
+                mysql.query(sqlModifyUser, [avatarUrl, userID], function (err, result) {
                     if (err) {
                         return res.status(500).json(err.message);
                     };
@@ -161,7 +167,7 @@ exports.modify = (req, res, next) => {
             })
         });
 
-    } else { // Si le chanement concerne les infos de l'user on demande le mdp
+    } else { // Si le changement concerne les infos de l'user on demande le mdp
         sqlFindUser = "SELECT password FROM User WHERE userID = ?";
         mysql.query(sqlFindUser, [userID], function (err, result) {
             if (err) {

@@ -2,7 +2,7 @@
   <div>
     <Alert v-if="!connected" :alertType="alert.type" :alertMessage="alert.message" />
     <div v-else>
-      <NavFeed />
+      <NavFeed/>
       <CreatePost v-on:post-sent="post" />
       <Alert
         v-if="alert.active && !alert.activeComment"
@@ -13,6 +13,7 @@
         v-for="post in posts"
         :key="post.postID"
         :idPost="post.postID"
+        :idUser="post.userID"
         v-on:d-comment-input="dCommentInput(post.postID)"
         v-on:reaction-down="sendReaction(post.postID, -1)"
         v-on:reaction-up="sendReaction(post.postID, 1)"
@@ -26,7 +27,7 @@
           <img :src="post.gifUrl" class="card-img" alt="..." />
         </template>
         <template v-slot:userAvatar>
-          <img src="../assets/avatar.jpg" class="card-img avatar rounded-circle mr-1" alt="..." />
+          <img :src="post.avatarUrl" class="card-img avatar rounded-circle mr-1" alt="..." />
         </template>
         <template v-slot:userName>{{ post.firstName + ' ' + post.lastName }}</template>
         <template v-slot:userPseudo v-if="post.pseudo !== null">{{ '@' + post.pseudo }}</template>

@@ -1,6 +1,6 @@
 <template>
   <div class="container-fluid">
-    <navLogin />
+    <NavLogin />
     <form onsubmit="return false">
       <InfoLogin validateText="Se connecter" v-on:data-sent="updateData" v-on:request-sent="login">
         <template v-slot:messageError>{{ message }}</template>

@@ -22,8 +22,8 @@
         id="navbarNavAltMarkup"
       >
         <div class="navbar-nav">
-          <p class="mr-md-4 text-right">
-            <router-link to="/">Mon profil</router-link>
+          <p class="mr-lg-4 text-right">
+            <router-link :to="{ name: 'Profile', params: {id: 'yourProfile' } }">Mon profil</router-link>
           </p>
           <p class="text-right">
             <router-link to="/">Se déconnecter</router-link>

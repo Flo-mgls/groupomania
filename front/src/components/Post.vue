@@ -1,18 +1,15 @@
 <template>
   <article class="mb-3" :id="idPost">
     <slot name="postDelete"></slot>
-    <div
-      class="row no-gutters post align-items-center"
-      @click="() => $router.push({ name: 'FeedID', params: {id: idPost} })"
-    >
-      <div class="col-md-4 order-last">
+    <div class="row no-gutters post align-items-center">
+      <div class="col-md-4 order-last" @click="goToFeedID(idPost)">
         <slot name="postGif"></slot>
       </div>
       <div class="col-md-8">
         <div class="container">
           <div class="row">
             <div class="col-12">
-              <p class="mb-0 font-weight-bold">
+              <p class="mb-0 font-weight-bold" @click="goToProfile(idUser)">
                 <slot name="userAvatar"></slot>
                 <slot name="userName"></slot>
                 <span class="text-muted ml-1 font-weight-normal">
@@ -21,7 +18,7 @@
               </p>
             </div>
           </div>
-          <div class="row text-center pt-3">
+          <div class="row text-center pt-3" @click="goToFeedID(idPost)">
             <p class="col-12 h5-lg">
               <slot name="postLegend"></slot>
             </p>
@@ -71,7 +68,7 @@
 <script>
 export default {
   name: "Post",
-  props: ["idPost", "reaction"],
+  props: ["idPost", "idUser", "reaction"],
   data: () => {
     return {
       reactionUp: "",
@@ -105,6 +102,14 @@ export default {
         this.reactionUp = "reactionNone";
         this.reactionDown = "reactionNone";
       }
+    },
+    goToFeedID(idPost) {
+      if (idPost != undefined) {
+        this.$router.push({ name: "FeedID", params: { id: idPost } });
+      }
+    },
+    goToProfile(idUser) {
+      this.$router.push({ name: "Profile", params: { id: idUser } });
     },
   },
   mounted() {
