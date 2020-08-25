@@ -9,6 +9,7 @@
         maxlength="180"
         required
         placeholder="Créer un post"
+        aria-label="Ecrire un post"
         v-model="legend"
       ></textarea>
       <div class="custom-file">
