@@ -21,8 +21,8 @@
         :reaction="post.yourReaction"
       >
         <template v-slot:postDelete v-if="post.yourPost > 0">
-          <i class="fas fa-times" aria-hidden="true" title="Supprimer le post" v-on:click="deletePost(post.postID)"></i>
-          <span class="sr-only" role="button">Supprimer le post</span>
+          <i class="fas fa-times" aria-hidden="true" title="Supprimer le post" role="button" v-on:click="deletePost(post.postID)"></i>
+          <span class="sr-only">Supprimer le post</span>
         </template>
         <template v-slot:postGif>
           <img :src="post.gifUrl" class="card-img" alt="Gif du post" />

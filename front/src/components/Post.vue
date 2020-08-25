@@ -2,14 +2,14 @@
   <article class="mb-3" :id="idPost">
     <slot name="postDelete"></slot>
     <div class="row no-gutters post align-items-center">
-      <div class="col-md-4 order-last" @click="goToFeedID(idPost)">
+      <div class="col-md-4 order-last" role="link" @click="goToFeedID(idPost)">
         <slot name="postGif"></slot>
       </div>
       <div class="col-md-8">
         <div class="container">
           <div class="row">
             <div class="col-12">
-              <p class="mb-0 font-weight-bold" @click="goToProfile(idUser)">
+              <p class="mb-0 font-weight-bold" role="link" @click="goToProfile(idUser)">
                 <slot name="userAvatar"></slot>
                 <slot name="userName"></slot>
                 <span class="text-muted ml-1 font-weight-normal">
@@ -18,7 +18,7 @@
               </p>
             </div>
           </div>
-          <div class="row text-center pt-3" @click="goToFeedID(idPost)">
+          <div class="row text-center pt-3" role="link" @click="goToFeedID(idPost)">
             <p class="col-12 h5-lg">
               <slot name="postLegend"></slot>
             </p>
@@ -34,15 +34,15 @@
     <div class="border-bottom">
       <div class="row">
         <div class="col-4 col-md-2">
-          <i class="fas fa-angle-up fa-lg" aria-hidden="true" title="Aimer le post" :class="reactionUp" v-on:click="sendReactionUp"></i>
-          <span class="sr-only" role="button">Aimer le post</span>
+          <i class="fas fa-angle-up fa-lg" aria-hidden="true" title="Aimer le post" role="button" :class="reactionUp" v-on:click="sendReactionUp"></i>
+          <span class="sr-only">Aimer le post</span>
           <span class="ml-1">
             <slot name="postUp"></slot>
           </span>
         </div>
         <div class="col-4 col-md-2">
-          <i class="fas fa-angle-down fa-lg" aria-hidden="true"  title="Ne pas aimer le post" :class="reactionDown" v-on:click="sendReactionDown"></i>
-          <span class="sr-only" role="button">Ne pas aimer le post</span>
+          <i class="fas fa-angle-down fa-lg" aria-hidden="true"  title="Ne pas aimer le post" role="button" :class="reactionDown" v-on:click="sendReactionDown"></i>
+          <span class="sr-only">Ne pas aimer le post</span>
           <span class="ml-1">
             <slot name="postDown"></slot>
           </span>
@@ -50,8 +50,8 @@
         <div class="col-4 col-md-4">
           <p>
             <a class="d-md-none">
-              <i class="fas fa-comments" aria-hidden="true"  title="Commmenter le post" v-on:click="displayCommentInput"></i>
-              <span class="sr-only" role="button">Commenter le post</span>
+              <i class="fas fa-comments" aria-hidden="true"  title="Commmenter le post" role="button" v-on:click="displayCommentInput"></i>
+              <span class="sr-only">Commenter le post</span>
             </a>
             <a class="d-none d-md-block" v-on:click="displayCommentInput">Commenter</a>
           </p>

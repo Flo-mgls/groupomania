@@ -3,7 +3,7 @@
     <nav class="navbar navbar-expand-lg navbar-light">
       <h1 class="navbar-brand w-50">
         <router-link to="/Feed">
-          <img class="img-fluid" alt="Groupomania" src="../assets/logo-feed.svg" />
+          <img class="img-fluid" alt="Groupomania" src="../assets/logo-feed.svg" role="link" />
         </router-link>
       </h1>
       <button

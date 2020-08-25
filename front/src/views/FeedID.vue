@@ -18,8 +18,8 @@
         :reaction="posts[indexLastPost].yourReaction"
       >
         <template v-slot:postDelete v-if="posts[indexLastPost].yourPost > 0">
-          <i class="fas fa-times" aria-hidden="true" title="Supprimer le post" v-on:click="deletePost(posts[indexLastPost].postID)"></i>
-          <span class="sr-only" role="button">Supprimer le post</span>
+          <i class="fas fa-times" aria-hidden="true" title="Supprimer le post" role="button" v-on:click="deletePost(posts[indexLastPost].postID)"></i>
+          <span class="sr-only">Supprimer le post</span>
         </template>
         <template v-slot:postGif>
           <img :src="posts[indexLastPost].gifUrl" class="card-img" alt="Gif du post" />
@@ -67,8 +67,8 @@
         :reaction="comment.yourReaction"
       >
         <template v-slot:commentDelete v-if="comment.yourPost > 0">
-          <i class="fas fa-times" aria-hidden="true" title="Supprimer le commentaire" v-on:click="deletePost(comment.postID)"></i>
-          <span class="sr-only" role="button">Supprimer le commentaire</span>
+          <i class="fas fa-times" aria-hidden="true" title="Supprimer le commentaire" role="button" v-on:click="deletePost(comment.postID)"></i>
+          <span class="sr-only">Supprimer le commentaire</span>
         </template>
         <template v-slot:userAvatar>
           <img :src="comment.avatarUrl" class="card-img avatar rounded-circle mr-1" alt="Avatar de l'utilisateur" />

@@ -6,10 +6,7 @@
         <div class="container">
           <div class="row">
             <div class="col-12">
-              <p
-                class="mb-0 font-weight-bold"
-                @click="goToProfile(idUser)"
-              >
+              <p class="mb-0 font-weight-bold" role="link" @click="goToProfile(idUser)">
                 <slot name="userAvatar"></slot>
                 <slot name="userName"></slot>
                 <span class="text-muted ml-1 font-weight-normal">
@@ -29,15 +26,29 @@
     <div class="border-bottom">
       <div class="row">
         <div class="col-6 col-md-2">
-          <i class="fas fa-angle-up fa-lg" aria-hidden="true"  title="Aimer le post" :class="reactionUp" v-on:click="sendReactionUp"></i>
-          <span class="sr-only" role="button">Aimer le commentaire</span>
+          <i
+            class="fas fa-angle-up fa-lg"
+            aria-hidden="true"
+            title="Aimer le post"
+            role="button"
+            :class="reactionUp"
+            v-on:click="sendReactionUp"
+          ></i>
+          <span class="sr-only">Aimer le commentaire</span>
           <span class="ml-1">
             <slot name="commentUp"></slot>
           </span>
         </div>
         <div class="col-6 col-md-2">
-          <i class="fas fa-angle-down fa-lg" aria-hidden="true"  title="Ne pas aimer le post" :class="reactionDown" v-on:click="sendReactionDown"></i>
-          <span class="sr-only" role="button">Ne pas aimer le commentaire</span>
+          <i
+            class="fas fa-angle-down fa-lg"
+            aria-hidden="true"
+            title="Ne pas aimer le post"
+            role="button"
+            :class="reactionDown"
+            v-on:click="sendReactionDown"
+          ></i>
+          <span class="sr-only">Ne pas aimer le commentaire</span>
           <span class="ml-1">
             <slot name="commentDown"></slot>
           </span>
