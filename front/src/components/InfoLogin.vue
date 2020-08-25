@@ -9,6 +9,7 @@
           id="email"
           required
           maxlength="60"
+          aria-label="Entrez votre email"
           v-model="email"
           v-on:input="sendData"
         />
@@ -23,6 +24,8 @@
           id="password"
           required
           pattern="(?=.*\d)(?=.*[a-z])(?=.*[A-Z]).{8,}"
+          aria-label="Entrez votre mot de passe"
+          aria-describedby="passwordInfo"
           v-model="password"
           v-on:input="sendData"
         />
@@ -35,7 +38,7 @@
           type="submit"
           v-on:click="sendRequest"
         >{{ validateText }}</button>
-        <p class="text-muted">
+        <p class="text-muted" id="passwordInfo">
           <slot name="messagePassword"></slot>
         </p>
         <p class="text-danger">

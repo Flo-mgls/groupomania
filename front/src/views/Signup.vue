@@ -64,5 +64,8 @@ export default {
         });
     },
   },
+  mounted() {
+    document.title = "Création de compte | Groupomania";
+  }
 };
 </script>

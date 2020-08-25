@@ -21,13 +21,14 @@
         :reaction="post.yourReaction"
       >
         <template v-slot:postDelete v-if="post.yourPost > 0">
-          <i class="fas fa-times" v-on:click="deletePost(post.postID)"></i>
+          <i class="fas fa-times" aria-hidden="true" title="Supprimer le post" v-on:click="deletePost(post.postID)"></i>
+          <span class="sr-only" role="button">Supprimer le post</span>
         </template>
         <template v-slot:postGif>
-          <img :src="post.gifUrl" class="card-img" alt="..." />
+          <img :src="post.gifUrl" class="card-img" alt="Gif du post" />
         </template>
         <template v-slot:userAvatar>
-          <img :src="post.avatarUrl" class="card-img avatar rounded-circle mr-1" alt="..." />
+          <img :src="post.avatarUrl" class="card-img avatar rounded-circle mr-1" alt="Avatar de l'utilisateur" />
         </template>
         <template v-slot:userName>{{ post.firstName + ' ' + post.lastName }}</template>
         <template v-slot:userPseudo v-if="post.pseudo !== null">{{ '@' + post.pseudo }}</template>
@@ -185,6 +186,7 @@ export default {
   },
   mounted() {
     this.get();
+    document.title = "Fil d'actualité | Groupomania";
   },
 };
 </script>

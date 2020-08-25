@@ -9,6 +9,7 @@
           id="firstName"
           required
           maxlength="30"
+          aria-label="Entrez votre prénom"
           v-model="firstName"
           v-on:input="sendData"
         />
@@ -21,6 +22,7 @@
           id="lastName"
           required
           maxlength="30"
+          aria-label="Entrez votre nom"
           v-model="lastName"
           v-on:input="sendData"
         />

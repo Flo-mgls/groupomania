@@ -13,7 +13,7 @@
         data-target="#navbarNavAltMarkup"
         aria-controls="navbarNavAltMarkup"
         aria-expanded="false"
-        aria-label="Toggle navigation"
+        aria-label="Afficher navigation"
       >
         <span class="navbar-toggler-icon"></span>
       </button>

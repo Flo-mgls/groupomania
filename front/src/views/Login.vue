@@ -54,6 +54,7 @@ export default {
   mounted() {
     sessionStorage.removeItem("token");
     delete this.$axios.defaults.headers.common["Authorization"];
+    document.title = "Se connecter | Groupomania";
   },
 };
 </script>

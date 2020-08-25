@@ -29,13 +29,15 @@
     <div class="border-bottom">
       <div class="row">
         <div class="col-6 col-md-2">
-          <i class="fas fa-angle-up fa-lg" :class="reactionUp" v-on:click="sendReactionUp"></i>
+          <i class="fas fa-angle-up fa-lg" aria-hidden="true"  title="Aimer le post" :class="reactionUp" v-on:click="sendReactionUp"></i>
+          <span class="sr-only" role="button">Aimer le commentaire</span>
           <span class="ml-1">
             <slot name="commentUp"></slot>
           </span>
         </div>
         <div class="col-6 col-md-2">
-          <i class="fas fa-angle-down fa-lg" :class="reactionDown" v-on:click="sendReactionDown"></i>
+          <i class="fas fa-angle-down fa-lg" aria-hidden="true"  title="Ne pas aimer le post" :class="reactionDown" v-on:click="sendReactionDown"></i>
+          <span class="sr-only" role="button">Ne pas aimer le commentaire</span>
           <span class="ml-1">
             <slot name="commentDown"></slot>
           </span>

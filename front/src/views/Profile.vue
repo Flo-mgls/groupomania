@@ -24,15 +24,15 @@
             <label class="custom-file-label" for="image">Choisir un avatar</label>
           </div>
           <div class="input-group mb-3">
-            <input class="form-control" type="text" v-model="user.pseudo" name="pseudo" />
+            <input class="form-control" type="text" v-model="user.pseudo" name="pseudo" aria-label="Modifiez pseudo" aria-describedby="pseudoInput" />
             <div class="input-group-append">
-              <span class="input-group-text">Pseudo</span>
+              <span class="input-group-text" id="pseudoInput">Pseudo</span>
             </div>
           </div>
           <div class="input-group mb-3">
-            <input class="form-control" type="email" v-model="user.email" name="email" />
+            <input class="form-control" type="email" v-model="user.email" name="email" aria-label="Modifiez email" aria-describedby="emailInput" />
             <div class="input-group-append">
-              <span class="input-group-text">Email</span>
+              <span class="input-group-text" id="emailInput">Email</span>
             </div>
           </div>
           <label for="bio">Bio</label>
@@ -51,6 +51,7 @@
             placeholder="Changer de mot de passe"
             id="newPassword"
             pattern="(?=.*\d)(?=.*[a-z])(?=.*[A-Z]).{8,}"
+            aria-label="Nouveau mot de passe"
           />
           <div class="input-group">
             <input
@@ -58,6 +59,7 @@
               type="password"
               placeholder="Mot de passe"
               id="password"
+              aria-label="Mot de passe pour confirmer"
             />
             <div class="input-group-append">
               <button
@@ -72,13 +74,13 @@
       </section>
 
       <section class="mt-5">
-        <img :src="user.avatarUrl" class="card-img avatar rounded-circle mr-1" alt="..." />
+        <img :src="user.avatarUrl" class="card-img avatar rounded-circle mr-1" alt="Avatar de l'utilisateur" />
         <h2 class="mt-1">{{ fullName }}</h2>
-        <p class="text-muted" v-if="user.pseudo != null">@{{ user.pseudo }}</p>
+        <p class="text-muted" aria-label="Pseudo" v-if="user.pseudo != null">@{{ user.pseudo }}</p>
         <p class="text-muted mt-5">{{ user.dateCreation }}</p>
         <div class="row" v-if="user.bio != null">
           <div class="col-md-6 offset-md-3">
-            <p class="text-center">{{ user.bio }}</p>
+            <p class="text-center" aria-label="Bio">{{ user.bio }}</p>
           </div>
         </div>
         <p class="mt-5">
@@ -103,6 +105,7 @@
               type="password"
               placeholder="Mot de passe"
               id="passwordDelete"
+              aria-label="Mot de passe pour confirmer"
             />
             <div class="input-group-append mb-4">
               <button type="submit" class="btn btn-light" v-on:click="deleteProfile">Supprimer</button>
@@ -232,6 +235,11 @@ export default {
   },
   mounted() {
     this.getUser();
+    if (this.$route.params.id === "yourProfile") {
+      document.title = "Mon profil | Groupomania";
+    } else {
+      document.title = "Profil d'utilisateur | Groupomania";
+    }
   },
   watch: {
     "$route.params.id": function () {

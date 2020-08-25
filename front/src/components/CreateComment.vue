@@ -8,6 +8,7 @@
         rows="2"
         required
         placeholder="Créer un commentaire"
+        aria-label="Ecrire un commentaire"
         v-model="body"
         v-on:input="sendComment"
       ></textarea>
