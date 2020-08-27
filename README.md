@@ -18,7 +18,7 @@ npm run serve
 > back
 >> app.js\
 >> **.env**\
->> server.js\
+>> server.js
 
 Y insérer directement ces 3 variables d'environnements:\
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;DB_ID=adminP7\
