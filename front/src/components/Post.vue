@@ -9,7 +9,7 @@
           <!-- Informations sur l'user -->
           <header class="row">
             <div class="col-12">
-              <p class="mb-0 font-weight-bold" role="link" @click="goToProfile(idUser)">
+              <p class="mb-0 font-weight-bold pointer" role="link" @click="goToProfile(idUser)">
                 <slot name="userAvatar"></slot>
                 <slot name="userName"></slot>
                 <span class="text-muted ml-1 font-weight-normal">
@@ -20,7 +20,7 @@
           </header>
           <!-- Fin -->
           <!-- Corps du post -->
-          <div class="row text-center pt-3" role="link" @click="goToFeedID(idPost)">
+          <div class="row text-center pt-3" :class="cursor" role="link" @click="goToFeedID(idPost)">
             <p class="col-12 h5-lg">
               <slot name="postLegend"></slot>
             </p>
@@ -29,7 +29,7 @@
         </div>
       </div>
       <!-- Gif du post -->
-      <div class="col-md-4" role="link" @click="goToFeedID(idPost)">
+      <div class="col-md-4" :class="cursor" role="link" @click="goToFeedID(idPost)">
         <slot name="postGif"></slot>
       </div>
       <!-- Fin -->
@@ -83,7 +83,7 @@
             ></i>
             <span class="sr-only">Commenter le post</span>
           </a>
-          <a class="d-none d-md-block" v-on:click="displayCommentInput">Commenter</a>
+          <a class="d-none d-md-block pointer" v-on:click="displayCommentInput">Commenter</a>
         </p>
       </div>
       <div class="col-12 col-md-4">
@@ -106,6 +106,7 @@ export default {
     return {
       reactionUp: "", // Nombre de réactions positives
       reactionDown: "", // Nombre de réactions négatives
+      cursor: "pointer" // Défini le pointeur que doit avoir le corps et gif du post
     };
   },
   methods: {
@@ -152,8 +153,13 @@ export default {
     },
   },
   mounted() {
-    // On update la réaction au niveau visuelle
+    // On update la réaction au niveau visuelle ainsi que le pointeur
     this.updateReaction();
+    if (this.$route.name === "Feed") {
+      this.cursor = "pointer";
+    } else {
+      this.cursor = "default";
+    }
   },
   updated() {
     // On update la réaction au niveau visuelle
@@ -184,6 +190,9 @@ article {
     &:hover {
       color: rgb(233, 68, 38);
     }
+  }
+  .pointer {
+    cursor: pointer;
   }
 }
 </style>

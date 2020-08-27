@@ -9,7 +9,7 @@
           <!-- Informations sur l'user -->
           <header class="row">
             <div class="col-12">
-              <p class="mb-0 font-weight-bold" role="link" @click="goToProfile(idUser)">
+              <p class="mb-0 font-weight-bold pointer" role="link" @click="goToProfile(idUser)">
                 <slot name="userAvatar"></slot>
                 <slot name="userName"></slot>
                 <span class="text-muted ml-1 font-weight-normal">
@@ -81,19 +81,22 @@ export default {
     };
   },
   methods: {
-    sendReactionUp() { // Envois de la réaction positive au parent pour traiter l'envoi à l'api
+    sendReactionUp() {
+      // Envois de la réaction positive au parent pour traiter l'envoi à l'api
       if (this.reaction === 1) {
         this.$emit("reaction-none");
       }
       this.$emit("reaction-up");
     },
-    sendReactionDown() { // Envois de la réaction négative au parent pour traiter l'envoi à l'api
+    sendReactionDown() {
+      // Envois de la réaction négative au parent pour traiter l'envoi à l'api
       if (this.reaction === -1) {
         this.$emit("reaction-none");
       }
       this.$emit("reaction-down");
     },
-    updateReaction() { // Update de la réaction au niveau visuelle avec CSS
+    updateReaction() {
+      // Update de la réaction au niveau visuelle avec CSS
       if (this.reaction === 1) {
         this.reactionUp = "reactionActive";
         this.reactionDown = "reactionNone";
@@ -105,14 +108,17 @@ export default {
         this.reactionDown = "reactionNone";
       }
     },
-    goToProfile(idUser) { // Route dynamique menant au profil de l'utilisateur ayant crée le commentaire
+    goToProfile(idUser) {
+      // Route dynamique menant au profil de l'utilisateur ayant crée le commentaire
       this.$router.push({ name: "Profile", params: { id: idUser } });
     },
   },
-  mounted() { // On update la réaction au niveau visuelle
+  mounted() {
+    // On update la réaction au niveau visuelle
     this.updateReaction();
   },
-  updated() { // On update la réaction au niveau visuelle
+  updated() {
+    // On update la réaction au niveau visuelle
     this.updateReaction();
   },
 };
@@ -131,6 +137,9 @@ article {
     &:hover {
       color: rgb(233, 68, 38);
     }
+  }
+  .pointer {
+    cursor: pointer;
   }
 }
 </style>
