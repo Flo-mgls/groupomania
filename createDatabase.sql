@@ -1,7 +1,6 @@
 SET NAMES utf8;
 
 DROP DATABASE IF EXISTS Groupomania;
-DROP USER IF EXISTS'admin';
 
 CREATE DATABASE Groupomania CHARACTER SET 'utf8';
 
