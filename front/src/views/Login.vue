@@ -1,11 +1,17 @@
+<!-- VIEW LOGIN - Page de login -->
+
 <template>
   <div class="container-fluid">
+    <!-- Navigation -->
     <NavLogin />
+    <!-- Fin -->
+    <!-- Form pour login -->
     <form onsubmit="return false">
       <InfoLogin validateText="Se connecter" v-on:data-sent="updateData" v-on:request-sent="login">
         <template v-slot:messageError>{{ message }}</template>
       </InfoLogin>
     </form>
+    <!-- Fin -->
   </div>
 </template>
 
@@ -23,15 +29,17 @@ export default {
     return {
       email: "",
       password: "",
-      message: null,
+      message: null, // Message d'erreur
     };
   },
   methods: {
     updateData(data) {
+      // Stock les infos de connexion
       this.email = data.email;
       this.password = data.password;
     },
     login() {
+      // Connecte l'utilisateur
       this.$axios
         .post("user/login", this.$data)
         .then((data) => {
@@ -52,6 +60,7 @@ export default {
     },
   },
   mounted() {
+    // Supprime le token pour la déconnexion et défini le titre
     sessionStorage.removeItem("token");
     delete this.$axios.defaults.headers.common["Authorization"];
     document.title = "Se connecter | Groupomania";

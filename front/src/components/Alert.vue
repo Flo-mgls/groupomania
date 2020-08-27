@@ -1,3 +1,5 @@
+<!-- COMPONENT ALERT - Posts et commentaires crées, supprimés et tentative de connexion échoué -->
+
 <template>
   <div class="alert" :class="alertType" role="alert">{{ alertMessage }}</div>
 </template>
@@ -8,6 +10,3 @@ export default {
   props: ['alertType', 'alertMessage'],
 };
 </script>
-
-<style scoped lang="scss">
-</style>

@@ -82,28 +82,32 @@ exports.delete = (req, res, next) => {
         }
 
         const filename = result[0].avatarUrl.split("/images/")[1];
-        fs.unlink(`images/${filename}`, () => { // On supprime le fichier image en amont
-            passwordHashed = result[0].password;
+        if (filename !== "avatarDefault.jpg") {
+            fs.unlink(`images/${filename}`, (e) => { // On supprime le fichier image en amont
+                if (e) {
+                    console.log(e);
+                }
+            })
+        }
+        passwordHashed = result[0].password;
 
-            bcrypt.compare(password, passwordHashed)
-                .then(valid => {
-                    if (!valid) {
-                        return res.status(401).json({ error: "Mot de passe incorrect !" });
+        bcrypt.compare(password, passwordHashed)
+            .then(valid => {
+                if (!valid) {
+                    return res.status(401).json({ error: "Mot de passe incorrect !" });
+                }
+                sqlDeleteUser = "DELETE FROM User WHERE userID = ?";
+                mysql.query(sqlDeleteUser, [userID], function (err, result) {
+                    if (err) {
+                        return res.status(500).json(err.message);
+                    };
+                    if (result.affectedRows == 0) {
+                        return res.status(400).json({ message: "Suppression échouée" });
                     }
-
-                    sqlDeleteUser = "DELETE FROM User WHERE userID = ?";
-                    mysql.query(sqlDeleteUser, [userID], function (err, result) {
-                        if (err) {
-                            return res.status(500).json(err.message);
-                        };
-                        if (result.affectedRows == 0) {
-                            return res.status(400).json({ message: "Suppression échouée" });
-                        }
-                        res.status(200).json({ message: "Utilisateur supprimé !" });
-                    });
-                })
-                .catch(e => res.status(500).json(e));
-        })
+                    res.status(200).json({ message: "Utilisateur supprimé !" });
+                });
+            })
+            .catch(e => res.status(500).json(e));
     });
 }
 // FIN MIDDLEWARE
@@ -156,15 +160,24 @@ exports.modify = (req, res, next) => {
             }
 
             const filename = result[0].avatarUrl.split("/images/")[1];
-            fs.unlink(`images/${filename}`, () => { // On supprime le fichier image en amont
-                sqlModifyUser = "UPDATE User SET avatarUrl = ? WHERE userID = ?";
+            sqlModifyUser = "UPDATE User SET avatarUrl = ? WHERE userID = ?";
+            if (filename !== "avatarDefault.jpg") {
+                fs.unlink(`images/${filename}`, () => { // On supprime le fichier image en amont
+                    mysql.query(sqlModifyUser, [avatarUrl, userID], function (err, result) {
+                        if (err) {
+                            return res.status(500).json(err.message);
+                        };
+                        return res.status(200).json({ message: "Utilisateur modifé !" });
+                    });
+                })
+            } else {
                 mysql.query(sqlModifyUser, [avatarUrl, userID], function (err, result) {
                     if (err) {
                         return res.status(500).json(err.message);
                     };
                     return res.status(200).json({ message: "Utilisateur modifé !" });
                 });
-            })
+            }
         });
 
     } else { // Si le changement concerne les infos de l'user on demande le mdp

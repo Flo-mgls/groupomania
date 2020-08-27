@@ -1,9 +1,16 @@
+<!-- VIEW PROFILE - Page des profils -->
+
 <template>
   <div class="container-fluid">
+    <!-- Alert si l'user est non connecté -->
     <Alert v-if="!connected" :alertType="alert.type" :alertMessage="alert.message" />
+    <!-- Fin -->
     <div v-else>
+      <!-- Navigation -->
       <NavFeed />
-      <section v-if="user.yourProfile === 1">
+      <!-- Fin -->
+      <!-- Form pour update le profil si c'est notre profil -->
+      <section class="border-bottom" v-if="user.yourProfile === 1">
         <h2
           class="h6"
           data-toggle="collapse"
@@ -24,13 +31,27 @@
             <label class="custom-file-label" for="image">Choisir un avatar</label>
           </div>
           <div class="input-group mb-3">
-            <input class="form-control" type="text" v-model="user.pseudo" name="pseudo" aria-label="Modifiez pseudo" aria-describedby="pseudoInput" />
+            <input
+              class="form-control"
+              type="text"
+              v-model="user.pseudo"
+              name="pseudo"
+              aria-label="Modifiez pseudo"
+              aria-describedby="pseudoInput"
+            />
             <div class="input-group-append">
               <span class="input-group-text" id="pseudoInput">Pseudo</span>
             </div>
           </div>
           <div class="input-group mb-3">
-            <input class="form-control" type="email" v-model="user.email" name="email" aria-label="Modifiez email" aria-describedby="emailInput" />
+            <input
+              class="form-control"
+              type="email"
+              v-model="user.email"
+              name="email"
+              aria-label="Modifiez email"
+              aria-describedby="emailInput"
+            />
             <div class="input-group-append">
               <span class="input-group-text" id="emailInput">Email</span>
             </div>
@@ -72,9 +93,15 @@
           <p class="text-danger">{{ messageError }}</p>
         </form>
       </section>
+      <!-- Fin -->
 
+      <!-- Profil de l'utilsateur -->
       <section class="mt-5">
-        <img :src="user.avatarUrl" class="card-img avatar rounded-circle mr-1" alt="Avatar de l'utilisateur" />
+        <img
+          :src="user.avatarUrl"
+          class="card-img avatar rounded-circle mr-1"
+          alt="Avatar de l'utilisateur"
+        />
         <h2 class="mt-1">{{ fullName }}</h2>
         <p class="text-muted" aria-label="Pseudo" v-if="user.pseudo != null">@{{ user.pseudo }}</p>
         <p class="text-muted mt-5">{{ user.dateCreation }}</p>
@@ -88,10 +115,12 @@
           <a :href="`mailto:${user.email}`" class="font-weight-bold">{{ user.email }}</a>
         </p>
       </section>
+      <!-- Fin -->
 
-      <section class="mt-5" v-if="user.yourProfile === 1">
+      <!-- Form pour supprimer son compte -->
+      <section class="mt-5 border-top" v-if="user.yourProfile === 1">
         <h2
-          class="mb-4 text-danger h6"
+          class="mb-4 mt-2 text-danger h6"
           data-toggle="collapse"
           href="#collapseDeleteProfile"
           role="button"
@@ -114,6 +143,7 @@
           </div>
         </form>
       </section>
+      <!-- Fin -->
     </div>
   </div>
 </template>
@@ -130,28 +160,31 @@ export default {
   },
   data: () => {
     return {
-      connected: true,
+      connected: true, // Défini si l'user est connecté
       messageError: null,
       alert: {
         type: "",
         message: "",
       },
-      user: {},
+      user: {}, // Stock les infos de l'utilisateur
     };
   },
   computed: {
     fullName() {
+      // Retourne le nom complet
       return `${this.user.firstName} ${this.user.lastName}`;
     },
   },
   methods: {
     alertConstant(type, message) {
+      // Crée une alerte
       const dataAlert = this.$data.alert;
       this.connected = false;
       dataAlert.type = type;
       dataAlert.message = message;
     },
     getUser() {
+      // Récupère les infos de l'utilisateur
       this.$axios
         .get(`user/${this.$route.params.id}/profile`)
         .then((data) => {
@@ -170,6 +203,7 @@ export default {
         });
     },
     updateAvatar(event) {
+      // Update son avatar
       const image = event.target.files[0];
       const formData = new FormData();
       formData.append("image", image);
@@ -183,6 +217,7 @@ export default {
         });
     },
     updateProfile() {
+      // Update les autres infos
       const email = this.user.email;
       const pseudo = this.user.pseudo;
       const bio = this.user.bio;
@@ -218,6 +253,7 @@ export default {
         });
     },
     deleteProfile() {
+      // Supprime l'utilisateur
       const password = document.getElementById("passwordDelete").value;
       this.$axios
         .delete("user/delete", { data: { password: password } })
@@ -234,6 +270,7 @@ export default {
     },
   },
   mounted() {
+    // Récupère les posts et défini le titre
     this.getUser();
     if (this.$route.params.id === "yourProfile") {
       document.title = "Mon profil | Groupomania";
@@ -242,6 +279,7 @@ export default {
     }
   },
   watch: {
+    // Permet d'actualiser l'utilisateur si l'on clic sur "Mon profil" pendant qu'on est déja sur une page d'utilisateur
     "$route.params.id": function () {
       this.getUser();
     },

@@ -1,6 +1,9 @@
+<!-- COMPONENT INFOSIGNUP - Infos à renseigner pour s'inscrire -->
+
 <template>
   <div>
     <div class="row">
+      <!-- Input pour le prénom -->
       <div class="col-lg-2 col-md-4 offset-lg-4 offset-md-2 mb-2">
         <input
           class="form-control text-center"
@@ -14,6 +17,8 @@
           v-on:input="sendData"
         />
       </div>
+      <!-- Fin -->
+      <!-- Input pour le nom -->
       <div class="col-lg-2 col-md-4 mb-2">
         <input
           class="form-control text-center"
@@ -27,6 +32,7 @@
           v-on:input="sendData"
         />
       </div>
+      <!-- Fin -->
     </div>
   </div>
 </template>
@@ -34,7 +40,6 @@
 <script>
 export default {
   name: "InfoSignup",
-  props: [],
   data: () => {
     return {
       firstName: "",
@@ -42,7 +47,7 @@ export default {
     };
   },
   methods: {
-    sendData() {
+    sendData() { // Envois des données au parent pour traiter l'envois à l'API
       const firstNameValid = document
         .getElementById("firstName")
         .checkValidity();
@@ -54,6 +59,3 @@ export default {
   },
 };
 </script>
-
-<style scoped lang="scss">
-</style>

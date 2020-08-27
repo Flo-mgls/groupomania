@@ -1,5 +1,8 @@
+<!-- COMPONENT INFOLOGIN - Infos à renseigner pour se connecter -->
+
 <template>
   <div>
+    <!-- Input pour l'email -->
     <div class="row mb-2">
       <div class="col-lg-4 col-md-8 offset-lg-4 offset-md-2">
         <input
@@ -8,6 +11,7 @@
           placeholder="Votre email"
           id="email"
           required
+          pattern="[a-zA-Z0-9._-]+@[a-zA-Z0-9._-]+.[a-zA-Z.]{2,15}"
           maxlength="60"
           aria-label="Entrez votre email"
           v-model="email"
@@ -15,6 +19,8 @@
         />
       </div>
     </div>
+    <!-- Fin -->
+    <!-- Input pour le mot de passe -->
     <div class="row mb-2">
       <div class="col-lg-4 col-md-8 offset-lg-4 offset-md-2">
         <input
@@ -31,6 +37,8 @@
         />
       </div>
     </div>
+    <!-- Fin -->
+    <!-- Bouton de connexion -->
     <div class="row mb-2">
       <div class="col-lg-4 col-md-8 offset-lg-4 offset-md-2">
         <button
@@ -46,6 +54,7 @@
         </p>
       </div>
     </div>
+    <!-- Fin -->
   </div>
 </template>
 
@@ -60,10 +69,10 @@ export default {
     };
   },
   methods: {
-    sendData() {
+    sendData() { // Envois des données au parent
       this.$emit("data-sent", this.$data);
     },
-    sendRequest() {
+    sendRequest() { // Envois de la requête d'envois au parent pour traiter l'envois à l'API
       const emailValid = document.getElementById("email").checkValidity();
       const passwordValid = document.getElementById("password").checkValidity();
       if (emailValid && passwordValid) {
@@ -73,6 +82,3 @@ export default {
   },
 };
 </script>
-
-<style scoped lang="scss">
-</style>

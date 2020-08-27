@@ -13,12 +13,12 @@
   -moz-osx-font-smoothing: grayscale;
   text-align: center;
   color: #2c3e50;
+  background-color: #fafbff;
+  min-height: 100%;
   a {
     color: #2c3e50;
   }
-}
-
-nav {
+  nav {
   padding: 30px;
 
   a {
@@ -29,5 +29,6 @@ nav {
       color: rgb(233, 68, 38);
     }
   }
+}
 }
 </style>
