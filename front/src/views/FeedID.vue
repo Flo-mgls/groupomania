@@ -218,6 +218,9 @@ export default {
       this.$axios
         .delete("post/" + postID)
         .then(() => {
+          if (postID === this.$route.params.id) {
+            this.$router.push({ name: "Feed"});
+          }
           const indexPost = this.$data.posts
             .map((e) => {
               return e.postID;
@@ -225,7 +228,7 @@ export default {
             .indexOf(parseInt(postID));
           this.$data.posts.splice(indexPost, 1);
 
-          this.alertActive("alert-warning", "Post supprimé !");
+          this.alertActive("alert-warning", "Commentaire supprimé !");
         })
         .catch((e) => console.log(e));
     },

@@ -27,7 +27,7 @@ Y insérer directement ces 3 variables d'environnements:\
 
 - Puis créez la base de donnée avec le fichier *createDatabse.sql*
 ```
-SOURCE yourPath/createDatabase.sql
+SOURCE yourPath/createDatabase.sql;
 ```
 
 *Enjoy*
